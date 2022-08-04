@@ -8,7 +8,7 @@ public class BattleController : MonoBehaviour
 {
     public static BattleController Instance { internal set; get; }
 
-    private BattleSceneController battleSceneController;
+    private GameSceneController battleSceneController;
 
     public Image playerBar, enemyBar;
     public Transform[] letterButtonTransforms;
@@ -49,7 +49,7 @@ public class BattleController : MonoBehaviour
 
     private void Start()
     {
-        battleSceneController = BattleSceneController.Instance;
+        battleSceneController = GameSceneController.Instance;
         DetermineLevelType();
     }
 

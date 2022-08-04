@@ -6,9 +6,9 @@ using TMPro;
 
 public enum LevelType { TIME_LETTER }
 
-public class BattleSceneController : UIController
+public class GameSceneController : UIController
 {
-    public static BattleSceneController Instance { get; internal set; }
+    public static GameSceneController Instance { get; internal set; }
 
     public CanvasGroup winWindow, loseWindow;
     public GameObject shade;

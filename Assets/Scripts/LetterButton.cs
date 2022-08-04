@@ -46,7 +46,7 @@ public class LetterButton : MonoBehaviour
             bc.AddLetterPlace(this);
             if (bc.CheckWord())
             {
-                BattleSceneController.Instance.OpenIndicatorText();
+                GameSceneController.Instance.OpenIndicatorText();
             }
         }
     }
