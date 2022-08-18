@@ -10,6 +10,8 @@ public class GameSceneController : UIController
 {
     public static GameSceneController Instance { get; internal set; }
 
+    private Coroutine indicatorAnimation;
+
     public CanvasGroup winWindow, loseWindow;
     public GameObject shade;
     public TextMeshProUGUI indicatorText;
@@ -41,7 +43,12 @@ public class GameSceneController : UIController
 
     private void Start()
     {
-        
+        indicatorText.gameObject.SetActive(false);
+        //Destroy all child upon start on LetterActivePlace
+        foreach (Transform item in BattleController.Instance.letterActivePlace.transform)
+        {
+            Destroy(item.gameObject);
+        }
     }
 
     public void OpenShade()
@@ -68,8 +75,9 @@ public class GameSceneController : UIController
 
     public void OpenIndicatorText()
     {
-        indicatorText.text = indicatorTextContent[BattleController.Instance.storedString.Length - 4];
-        StartCoroutine(StartIndicatorText());
+        indicatorText.text = indicatorTextContent[BattleController.Instance.storedString.Length - BattleController.Instance.minimalLetterCount];
+        if (indicatorAnimation != null) StopCoroutine(indicatorAnimation);
+        indicatorAnimation = StartCoroutine(StartIndicatorText());
     }
 
     private IEnumerator StartIndicatorText()

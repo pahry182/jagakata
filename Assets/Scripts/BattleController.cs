@@ -1,4 +1,4 @@
-using System.Collections;
+   using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -8,21 +8,23 @@ public class BattleController : MonoBehaviour
 {
     public static BattleController Instance { internal set; get; }
 
-    private GameSceneController battleSceneController;
+    private GameSceneController gameSceneController;
 
     public Image playerBar, enemyBar;
     public Transform[] letterButtonTransforms;
     public Vector2[] letterButtonPositions;
-    public Transform letterPlace;
-    public Transform letterBox;
+    public Transform letterActivePlace;
+    public Transform letterContainer;
+    public Transform canvas;
 
     public string storedString;
     public string[] storedLetters;
     public List<int> storedIndexLetters;
     public List<string> kbbi;
     public string[] texts;
+    public int minimalLetterCount;
 
-    private LetterButton[] letterButtons = new LetterButton[25];
+    private LetterButton[] letterButtons = new LetterButton[16];
 
     private bool isPlayerTimeBased;
     private bool isEnemyLetterBased;
@@ -49,7 +51,7 @@ public class BattleController : MonoBehaviour
 
     private void Start()
     {
-        battleSceneController = GameSceneController.Instance;
+        gameSceneController = GameSceneController.Instance;
         DetermineLevelType();
     }
 
@@ -65,7 +67,7 @@ public class BattleController : MonoBehaviour
 
     public Vector2 GetPositionLetterButton(Transform letterButton)
     {
-        return BattleController.Instance.letterButtonPositions[GetIndexLetterButton(letterButton)];
+        return letterButtonPositions[GetIndexLetterButton(letterButton)];
     }
 
     public void AddLetterPlace(LetterButton letterButton)
@@ -97,14 +99,14 @@ public class BattleController : MonoBehaviour
     {
         List<LetterButton> temporalLetterPlace = new List<LetterButton>();
 
-        foreach (Transform item in letterPlace)
+        foreach (Transform item in letterActivePlace)
         {
             temporalLetterPlace.Add(item.GetComponent<LetterButton>());
         }
 
         foreach (var item in temporalLetterPlace)
         {
-            item.UseLetterButton();
+            if (item.isPlaced) item.UseLetterButton();
         }
 
         foreach (var item in letterButtons)
@@ -112,7 +114,7 @@ public class BattleController : MonoBehaviour
             item.GenerateLetter();
         }
 
-        battleSceneController.currentPlayerProgression -= battleSceneController.enemyProgression;
+        gameSceneController.currentPlayerProgression -= gameSceneController.enemyProgression;
         CheckBar();
     }
 
@@ -120,9 +122,9 @@ public class BattleController : MonoBehaviour
     {
         if (CheckWord())
         {
-            if (storedString.ToLower() == battleSceneController.enemyRealName.ToLower())
+            if (storedString.ToLower() == gameSceneController.enemyRealName.ToLower())
             {
-                battleSceneController.currentEnemyProgression = battleSceneController.enemyBarProgression;
+                gameSceneController.currentEnemyProgression = gameSceneController.enemyBarProgression;
             }
             else
             {
@@ -132,14 +134,14 @@ public class BattleController : MonoBehaviour
             CheckBar();
             List<LetterButton> temporalLetterPlace = new List<LetterButton>();
 
-            foreach (Transform item in letterPlace)
+            foreach (Transform item in letterActivePlace)
             {
                 temporalLetterPlace.Add(item.GetComponent<LetterButton>());
             }
 
             foreach (var item in temporalLetterPlace)
             {
-                item.UseLetterButton();
+                item.SystemReturnLetter();
             }
 
             foreach (var item in temporalLetterPlace)
@@ -155,57 +157,59 @@ public class BattleController : MonoBehaviour
 
     public bool CheckWord()
     {
-        return Array.Exists(GameManager.Instance.kbbi, jawaban => jawaban == storedString.ToLower());
+        if (storedIndexLetters.Count >= minimalLetterCount) 
+            return Array.Exists(GameManager.Instance.wordsDictionary, jawaban => jawaban == storedString.ToLower());
+        return false;
     }
 
     private void AdvanceProgressionEnemy()
     {
         if (isEnemyLetterBased)
         {
-            battleSceneController.currentEnemyProgression += storedString.Length;
+            gameSceneController.currentEnemyProgression += storedString.Length;
         }
         else
         {
-            battleSceneController.currentEnemyProgression += battleSceneController.playerProgression;
+            gameSceneController.currentEnemyProgression += gameSceneController.playerProgression;
         }
     }
 
     private void CheckBar()
     {
-        if (battleSceneController.currentPlayerProgression == 0)
+        if (gameSceneController.currentPlayerProgression == 0)
         {
             playerBar.fillAmount = 0;
             LoseGame();
         }
         else
         {
-            playerBar.fillAmount = (float)battleSceneController.currentPlayerProgression / (float)battleSceneController.playerBarProgression;
+            playerBar.fillAmount = (float)gameSceneController.currentPlayerProgression / (float)gameSceneController.playerBarProgression;
         }
 
-        if (battleSceneController.currentEnemyProgression == 0)
+        if (gameSceneController.currentEnemyProgression == 0)
         {
             enemyBar.fillAmount = 0;
         }
         else
         {
-            enemyBar.fillAmount = battleSceneController.currentEnemyProgression / battleSceneController.enemyBarProgression;
+            enemyBar.fillAmount = gameSceneController.currentEnemyProgression / gameSceneController.enemyBarProgression;
             WinGame();
         }
     }
 
     private void LoseGame()
     {
-        battleSceneController.OpenLoseWindow();
+        gameSceneController.OpenLoseWindow();
     }
 
     private void WinGame()
     {
-        if (battleSceneController.currentEnemyProgression != battleSceneController.enemyBarProgression) return;
+        if (gameSceneController.currentEnemyProgression != gameSceneController.enemyBarProgression) return;
     }
 
     private void DetermineLevelType()
     {
-        switch (battleSceneController.levelType)
+        switch (gameSceneController.levelType)
         {
             case LevelType.TIME_LETTER:
                 isPlayerTimeBased = true;
@@ -220,7 +224,7 @@ public class BattleController : MonoBehaviour
     {
         if (isPlayerTimeBased)
         {
-            battleSceneController.currentPlayerProgression -= Time.deltaTime * battleSceneController.enemyTimeProgression;
+            gameSceneController.currentPlayerProgression -= Time.deltaTime * gameSceneController.enemyTimeProgression;
             CheckBar();
         }
     }

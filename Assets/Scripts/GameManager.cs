@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour
     public new Audio audio = new Audio();
     public Setting setting = new Setting();
 
-    public string[] kbbi;
+    public string loadedTextFileName;
+    public string[] wordsDictionary;
 
     private void Awake()
     {
@@ -25,10 +26,10 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        TextAsset file = Resources.Load("KBBI") as TextAsset;
+        TextAsset file = Resources.Load(loadedTextFileName) as TextAsset;
         string txt = file.ToString();
         char[] separators = new char[] { ' ', ',' };
-        kbbi = txt.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+        wordsDictionary = txt.Split(separators, StringSplitOptions.RemoveEmptyEntries);
     }
 
     public void PlaySfx(string name)
