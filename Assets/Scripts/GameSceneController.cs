@@ -12,20 +12,25 @@ public class GameSceneController : UIController
 
     private Coroutine indicatorAnimation;
 
+    public DisplayPageTextHandler[] displayPages;
+    public GameObject displayTextPrefab;
     public CanvasGroup winWindow, loseWindow;
     public GameObject shade;
-    public TextMeshProUGUI indicatorText;
+    public TextMeshProUGUI indicatorText, scoreText;
     public string[] indicatorTextContent;
+    public int maximumPageDisplayText;
+    public float cumulativeScore;
+    
 
     [Header("Level Design")]
     public string enemyName;
     public string enemyRealName;
     public LevelType levelType = LevelType.TIME_LETTER;
-    public int enemyBarProgression;
-    public int playerBarProgression;
-    public float enemyProgression, enemyTimeProgression, playerProgression, playerTimeProgression;
-
-    [HideInInspector] public float currentPlayerProgression, currentEnemyProgression;
+    public int maxBarProgression;
+    public float incrementBarProgression;
+    public float decrementAcakBarProgression, decrementTimeBarProgression;
+    
+    [HideInInspector] public float currentBarProgression;
 
     private void Awake()
     {
@@ -38,12 +43,13 @@ public class GameSceneController : UIController
             Destroy(gameObject);
         }
 
-        currentPlayerProgression = playerBarProgression;
+        currentBarProgression = maxBarProgression;
     }
 
     private void Start()
     {
         indicatorText.gameObject.SetActive(false);
+        scoreText.text = "0";
         //Destroy all child upon start on LetterActivePlace
         foreach (Transform item in BattleController.Instance.letterActivePlace.transform)
         {
@@ -88,5 +94,37 @@ public class GameSceneController : UIController
         yield return new WaitForSeconds(0.8f);
 
         indicatorText.gameObject.SetActive(false);
+    }
+
+    public void AddToDisplayPage(string _text)
+    {
+        Transform parent;
+
+        if (displayPages[0].transform.childCount < maximumPageDisplayText)
+        {
+            parent = displayPages[0].transform;
+        }
+        else if (displayPages[1].transform.childCount < maximumPageDisplayText)
+        {
+            parent = displayPages[1].transform;
+        }
+        else
+        {
+            foreach (DisplayPageTextHandler item in displayPages)
+            {
+                item.RemoveAllChild();
+            }
+            //Flip the Page Codes here
+            parent = displayPages[0].transform;
+        }
+
+        GameObject displayText = Instantiate(displayTextPrefab, parent);
+        displayText.GetComponent<TextMeshProUGUI>().text = _text;
+    }
+
+    public void UpdateScore()
+    {
+        cumulativeScore += GameManager.Instance.CalculateScore();
+        scoreText.text = cumulativeScore.ToString();
     }
 }

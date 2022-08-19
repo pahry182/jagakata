@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+public enum ScoreOf5 { X, Z }
+public enum ScoreOf4 { J, K, Q }
+public enum ScoreOf3 { V, W, Y }
+public enum ScoreOf2 { B, C, F, H, M, P }
+public enum ScoreOf1 { A, D, E, G, I, L, N, O, R, S, T, U }
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; internal set; }
@@ -13,6 +19,10 @@ public class GameManager : MonoBehaviour
 
     public string loadedTextFileName;
     public string[] wordsDictionary;
+
+    [Header("Letter Weight")]
+    public string scoreOf5;
+    public string scoreOf4, scoreOf3, scoreOf2, scoreOf1;
 
     private void Awake()
     {
@@ -30,6 +40,35 @@ public class GameManager : MonoBehaviour
         string txt = file.ToString();
         char[] separators = new char[] { ' ', ',' };
         wordsDictionary = txt.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    private void Start()
+    {
+        
+    }
+
+    public int DetermineWeight(string letter)
+    {
+        int weight;
+
+        if (scoreOf5.Contains(letter)) weight = 5;
+        else if (scoreOf4.Contains(letter)) weight = 4;
+        else if (scoreOf3.Contains(letter)) weight = 3;
+        else if (scoreOf2.Contains(letter)) weight = 2;
+        else if (scoreOf1.Contains(letter)) weight = 1;
+        else weight = 0;
+
+        return weight;
+    }
+
+    public float CalculateScore()
+    {
+        float score = 0;
+        foreach (var item in BattleController.Instance.storedString)
+        {
+            score += DetermineWeight(item.ToString());
+        }
+        return score;
     }
 
     public void PlaySfx(string name)

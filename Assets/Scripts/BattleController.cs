@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class BattleController : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class BattleController : MonoBehaviour
 
     private GameSceneController gameSceneController;
 
-    public Image playerBar, enemyBar;
+    public Image progressBar;
     public Transform[] letterButtonTransforms;
     public Vector2[] letterButtonPositions;
     public Transform letterActivePlace;
@@ -20,14 +21,13 @@ public class BattleController : MonoBehaviour
     public string storedString;
     public string[] storedLetters;
     public List<int> storedIndexLetters;
-    public List<string> kbbi;
-    public string[] texts;
+    public List<string> submittedWords;
     public int minimalLetterCount;
 
     private LetterButton[] letterButtons = new LetterButton[16];
+    private LetterButton[] movingLetters;
+    [HideInInspector] public List<LetterButton> temporalLetterPlace = new List<LetterButton>();
 
-    private bool isPlayerTimeBased;
-    private bool isEnemyLetterBased;
 
     private void Awake()
     {
@@ -114,7 +114,7 @@ public class BattleController : MonoBehaviour
             item.GenerateLetter();
         }
 
-        gameSceneController.currentPlayerProgression -= gameSceneController.enemyProgression;
+        gameSceneController.currentBarProgression -= gameSceneController.decrementAcakBarProgression;
         CheckBar();
     }
 
@@ -122,22 +122,18 @@ public class BattleController : MonoBehaviour
     {
         if (CheckWord())
         {
-            if (storedString.ToLower() == gameSceneController.enemyRealName.ToLower())
-            {
-                gameSceneController.currentEnemyProgression = gameSceneController.enemyBarProgression;
-            }
-            else
-            {
-                AdvanceProgressionEnemy();
-            }
-            
-            CheckBar();
-            List<LetterButton> temporalLetterPlace = new List<LetterButton>();
+            submittedWords.Add(storedString);
+            gameSceneController.AddToDisplayPage(storedString);
+            gameSceneController.UpdateScore();
+            AdvanceBarProgression();
 
-            foreach (Transform item in letterActivePlace)
-            {
-                temporalLetterPlace.Add(item.GetComponent<LetterButton>());
-            }
+            CheckBar();
+            //List<LetterButton> temporalLetterPlace = new List<LetterButton>();
+
+            //foreach (Transform item in letterActivePlace)
+            //{
+            //    temporalLetterPlace.Add(item.GetComponent<LetterButton>());
+            //}
 
             foreach (var item in temporalLetterPlace)
             {
@@ -148,10 +144,8 @@ public class BattleController : MonoBehaviour
             {
                 item.GenerateLetter();
             }
-        }
-        else
-        {
 
+            temporalLetterPlace = new List<LetterButton>();
         }
     }
 
@@ -162,38 +156,21 @@ public class BattleController : MonoBehaviour
         return false;
     }
 
-    private void AdvanceProgressionEnemy()
+    private void AdvanceBarProgression()
     {
-        if (isEnemyLetterBased)
-        {
-            gameSceneController.currentEnemyProgression += storedString.Length;
-        }
-        else
-        {
-            gameSceneController.currentEnemyProgression += gameSceneController.playerProgression;
-        }
+        gameSceneController.currentBarProgression += storedString.Length;
     }
 
     private void CheckBar()
     {
-        if (gameSceneController.currentPlayerProgression == 0)
+        if (gameSceneController.currentBarProgression == 0)
         {
-            playerBar.fillAmount = 0;
+            progressBar.fillAmount = 0;
             LoseGame();
         }
         else
         {
-            playerBar.fillAmount = (float)gameSceneController.currentPlayerProgression / (float)gameSceneController.playerBarProgression;
-        }
-
-        if (gameSceneController.currentEnemyProgression == 0)
-        {
-            enemyBar.fillAmount = 0;
-        }
-        else
-        {
-            enemyBar.fillAmount = gameSceneController.currentEnemyProgression / gameSceneController.enemyBarProgression;
-            WinGame();
+            progressBar.fillAmount = gameSceneController.currentBarProgression / gameSceneController.maxBarProgression;
         }
     }
 
@@ -202,18 +179,16 @@ public class BattleController : MonoBehaviour
         gameSceneController.OpenLoseWindow();
     }
 
-    private void WinGame()
-    {
-        if (gameSceneController.currentEnemyProgression != gameSceneController.enemyBarProgression) return;
-    }
+    //private void WinGame()
+    //{
+    //    if (gameSceneController.currentEnemyProgression != gameSceneController.maxBarProgression) return;
+    //}
 
     private void DetermineLevelType()
     {
         switch (gameSceneController.levelType)
         {
             case LevelType.TIME_LETTER:
-                isPlayerTimeBased = true;
-                isEnemyLetterBased = true;
                 break;
             default:
                 break;
@@ -222,10 +197,7 @@ public class BattleController : MonoBehaviour
 
     private void UpdateProgression()
     {
-        if (isPlayerTimeBased)
-        {
-            gameSceneController.currentPlayerProgression -= Time.deltaTime * gameSceneController.enemyTimeProgression;
-            CheckBar();
-        }
+        gameSceneController.currentBarProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
+        CheckBar();
     }
 }

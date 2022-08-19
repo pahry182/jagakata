@@ -41,6 +41,7 @@ public class LetterButton : MonoBehaviour
 
     public void SystemReturnLetter()
     {
+        DOTween.KillAll();
         BattleController bc = BattleController.Instance;
         isPlaced = false;
         transform.SetParent(bc.letterContainer, false);
@@ -60,12 +61,14 @@ public class LetterButton : MonoBehaviour
             transform.SetParent(bc.canvas);
             transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
             bc.RemoveLetterPlace(this);
+            bc.temporalLetterPlace.Remove(this);
         }
         else
         {
             isPlaced = true;
             lastPos = bc.GetPositionLetterButton(transform);
             bc.AddLetterPlace(this);
+            bc.temporalLetterPlace.Add(this);
 
             transform.SetParent(bc.canvas);
             //GameObject ghostButton = Instantiate(ghostButtonPrefab, bc.letterActivePlace);
