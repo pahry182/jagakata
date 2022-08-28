@@ -6,9 +6,9 @@ using TMPro;
 
 public enum LevelType { TIME_LETTER }
 
-public class GameSceneController : UIController
+public class MainGameSceneController : UIController
 {
-    public static GameSceneController Instance { get; internal set; }
+    public static MainGameSceneController Instance { get; internal set; }
 
     private Coroutine indicatorAnimation;
 
@@ -126,5 +126,10 @@ public class GameSceneController : UIController
     {
         cumulativeScore += GameManager.Instance.CalculateScore();
         scoreText.text = cumulativeScore.ToString();
+    }
+
+    public void EndGame()
+    {
+        LoadScene("ResultScene");
     }
 }
