@@ -77,7 +77,7 @@ public class LetterButton : MonoBehaviour
 
             if (bc.CheckWord())
             {
-                GameSceneController.Instance.OpenIndicatorText();
+                MainGameSceneController.Instance.OpenIndicatorText();
             }
         }
 
