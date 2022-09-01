@@ -2,12 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-
-public enum ScoreOf5 { X, Z }
-public enum ScoreOf4 { J, K, Q }
-public enum ScoreOf3 { V, W, Y }
-public enum ScoreOf2 { B, C, F, H, M, P }
-public enum ScoreOf1 { A, D, E, G, I, L, N, O, R, S, T, U }
+using UnityEngine.Networking;
+using System.Text;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,12 +13,39 @@ public class GameManager : MonoBehaviour
     public new Audio audio = new Audio();
     public Setting setting = new Setting();
 
+    [HideInInspector] public UserScoreList userScoreDB;
+    [HideInInspector] public const string URL = "https://parseapi.back4app.com/classes/Userscore";
+    [HideInInspector] public const string APP_ID = "8nkUt6v8S9HyE4RkXICQWF81UUCqgdXS2gUS7waX";
+    [HideInInspector] public const string KEY_ID = "8UUVRZnpPVENrDNGLiyYgBjShEaJ40woLfYJqhUq";
+
+    public string currentUserSessionID;
     public string loadedTextFileName;
     public string[] wordsDictionary;
 
-    [Header("Letter Weight")]
-    public string scoreOf5;
-    public string scoreOf4, scoreOf3, scoreOf2, scoreOf1;
+    [Serializable]
+    public class UserScoreList
+    {
+        public List<UserScore> userScoreJSONList;
+    }
+
+    [Serializable]
+    public class UserScore
+    {
+        public string objectId;
+        public string nickname;
+        public int score;
+        public DateTime createdAt;
+        public DateTime updatedAt;
+    }
+
+    //[Header("Letter Weight")]
+    //public string scoreOf5;
+    //public string scoreOf4, scoreOf3, scoreOf2, scoreOf1;
+
+    //[Header("PowerUp Sprite")]
+    //public Sprite power1;
+    //public Sprite power2, power3, nonPower;
+    //public float power1mod, power2mod, power3mod;
 
     private void Awake()
     {
@@ -35,7 +58,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        SetupAudio();
         TextAsset file = Resources.Load(loadedTextFileName) as TextAsset;
         string txt = file.ToString();
         char[] separators = new char[] { ' ', ',' };
@@ -47,28 +70,111 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public int DetermineWeight(string letter)
+    public IEnumerator RequestGetScore()
     {
-        int weight;
+        UnityWebRequest request = UnityWebRequest.Get(URL);
+        SetHeaderB4App(request);
 
-        if (scoreOf5.Contains(letter)) weight = 5;
-        else if (scoreOf4.Contains(letter)) weight = 4;
-        else if (scoreOf3.Contains(letter)) weight = 3;
-        else if (scoreOf2.Contains(letter)) weight = 2;
-        else if (scoreOf1.Contains(letter)) weight = 1;
-        else weight = 0;
+        yield return request.SendWebRequest();
 
-        return weight;
+        if (request.error != null)
+        {
+            print("Error:" + request.error);
+        }
+        else
+        {
+            print(request.result);
+            //print(request.downloadHandler.text);
+
+            string json = "{ \"userScoreJSONList\" : " + request.downloadHandler.text + "}";
+            print(json);
+            userScoreDB = JsonUtility.FromJson<UserScoreList>(json);
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        ResultSceneController.Instance.LeaderboardGetScore();
     }
 
-    public float CalculateScore()
+    public void RequestPostAccountMethod(string nickname)
     {
-        float score = 0;
-        foreach (var item in BattleController.Instance.storedString)
+        StartCoroutine(RequestPostAccount(nickname));
+    }
+
+    public IEnumerator RequestPostAccount(string nickname)
+    {
+        UserScore userscore = new UserScore();
+        userscore.nickname = nickname;
+        userscore.createdAt = DateTime.Now;
+        userscore.updatedAt = DateTime.Now;
+        string data = JsonUtility.ToJson(userscore);
+        var request = new UnityWebRequest(URL, UnityWebRequest.kHttpVerbPOST);
+        SetHeaderB4App(request);
+        var jsonBytes = Encoding.UTF8.GetBytes(data);
+        request.uploadHandler = new UploadHandlerRaw(jsonBytes);
+        request.downloadHandler = new DownloadHandlerBuffer();
+
+        yield return request.SendWebRequest();
+
+        if (request.error != null)
         {
-            score += DetermineWeight(item.ToString());
+            Debug.Log(request.error);
+            //Debug.Log(request.downloadHandler.text);
         }
-        return score;
+        else
+        {
+            print(request.result);
+            //print(request.downloadHandler.text);
+
+            UserScore userScore = JsonUtility.FromJson<UserScore>(request.downloadHandler.text);
+            currentUserSessionID = userScore.objectId;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+    }
+
+    public IEnumerator RequestPutScore(string objectId, int score)
+    {
+        UnityWebRequest request = UnityWebRequest.Get(URL + "/" + objectId);
+        SetHeaderB4App(request);
+
+        yield return request.SendWebRequest();
+
+        if (request.error != null)
+        {
+            print("Error:" + request.error);
+        }
+        else
+        {
+            UserScore userScore = JsonUtility.FromJson<UserScore>(request.downloadHandler.text);
+            userScore.score = score;
+            userScore.updatedAt = DateTime.Now;
+            string data = JsonUtility.ToJson(userScore);
+            request = new UnityWebRequest(URL + "/" + objectId, UnityWebRequest.kHttpVerbPUT);
+            SetHeaderB4App(request);
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            yield return request.SendWebRequest();
+
+            if (request.error != null)
+            {
+                Debug.Log(request.error);
+                //Debug.Log(request.downloadHandler.text);
+            }
+            else
+            {
+                print(request.result);
+                //print(request.downloadHandler.text);
+            }
+        }
+    }
+
+    private void SetHeaderB4App(UnityWebRequest request)
+    {
+        request.SetRequestHeader("Content-Type", "application/json");
+        request.SetRequestHeader("X-Parse-Application-Id", APP_ID);
+        request.SetRequestHeader("X-Parse-REST-API-Key", KEY_ID);
     }
 
     public void PlaySfx(string name)

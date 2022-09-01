@@ -1,4 +1,4 @@
-   using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -23,6 +23,15 @@ public class BattleController : MonoBehaviour
     public List<int> storedIndexLetters;
     public List<string> submittedWords;
     public int minimalLetterCount;
+
+    [Header("Letter Weight")]
+    public string scoreOf5;
+    public string scoreOf4, scoreOf3, scoreOf2, scoreOf1;
+
+    [Header("PowerUp Sprite")]
+    public Sprite power1;
+    public Sprite power2, power3, nonPower;
+    public float power1mod, power2mod, power3mod;
 
     private LetterButton[] letterButtons = new LetterButton[16];
     private LetterButton[] movingLetters;
@@ -109,31 +118,38 @@ public class BattleController : MonoBehaviour
             if (item.isPlaced) item.UseLetterButton();
         }
 
-        foreach (var item in letterButtons)
-        {
-            item.GenerateLetter();
-        }
+        foreach (var item in letterButtons) item.GetComponent<Button>().interactable = false;
+
+        StartCoroutine(AnimationGenerateLetter());
 
         gameSceneController.currentBarProgression -= gameSceneController.decrementAcakBarProgression;
         CheckBar();
+    }
+
+    private IEnumerator AnimationGenerateLetter()
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            foreach (var item in letterButtons) item.GenerateLetter();
+            yield return new WaitForSeconds(0.055f);
+        }
+
+        foreach (var item in letterButtons) item.GetComponent<Button>().interactable = true;
     }
 
     public void PasangButton()
     {
         if (CheckWord())
         {
-            submittedWords.Add(storedString);
-            gameSceneController.AddToDisplayPage(storedString);
             gameSceneController.UpdateScore();
             AdvanceBarProgression();
 
-            CheckBar();
-            //List<LetterButton> temporalLetterPlace = new List<LetterButton>();
+            foreach (var item in temporalLetterPlace) item.UpdateLetterButtonTypes(PowerUpTypes.NORMAL);
 
-            //foreach (Transform item in letterActivePlace)
-            //{
-            //    temporalLetterPlace.Add(item.GetComponent<LetterButton>());
-            //}
+            submittedWords.Add(storedString);
+            gameSceneController.AddToDisplayPage(storedString);
+            CheckForPowerUpValidSpawn();
+            CheckBar();
 
             foreach (var item in temporalLetterPlace)
             {
@@ -149,6 +165,35 @@ public class BattleController : MonoBehaviour
         }
     }
 
+    public void CheckForPowerUpValidSpawn()
+    {
+        PowerUpTypes assginedPower = PowerUpTypes.NORMAL;
+
+        if (storedIndexLetters.Count >= 7) assginedPower = PowerUpTypes.POWER3;
+        else if (storedIndexLetters.Count == 6) assginedPower = PowerUpTypes.POWER2;
+        else if (storedIndexLetters.Count == 5) assginedPower = PowerUpTypes.POWER1;
+
+        SpawnPowerUp(assginedPower);
+    }
+
+    public void SpawnPowerUp(PowerUpTypes type)
+    {
+        int randomPos = UnityEngine.Random.Range(0, letterButtonTransforms.Length);
+
+        while (true)
+        {
+            if (letterButtons[randomPos].powerUpType == PowerUpTypes.NORMAL)
+            {
+                letterButtons[randomPos].UpdateLetterButtonTypes(type);
+                return;
+            }
+            else
+            {
+                randomPos = UnityEngine.Random.Range(0, letterButtonTransforms.Length);
+            }
+        }
+    }
+
     public bool CheckWord()
     {
         if (storedIndexLetters.Count >= minimalLetterCount) 
@@ -158,12 +203,12 @@ public class BattleController : MonoBehaviour
 
     private void AdvanceBarProgression()
     {
-        gameSceneController.currentBarProgression += storedString.Length;
+        gameSceneController.currentBarProgression += CalculateScore();
     }
 
     private void CheckBar()
     {
-        if (gameSceneController.currentBarProgression == 0)
+        if (gameSceneController.currentBarProgression < 0)
         {
             progressBar.fillAmount = 0;
             LoseGame();
@@ -176,6 +221,7 @@ public class BattleController : MonoBehaviour
 
     private void LoseGame()
     {
+        StartCoroutine(GameManager.Instance.RequestPutScore(GameManager.Instance.currentUserSessionID, (int)MainGameSceneController.Instance.cumulativeScore));
         gameSceneController.OpenLoseWindow();
     }
 
@@ -199,5 +245,54 @@ public class BattleController : MonoBehaviour
     {
         gameSceneController.currentBarProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
         CheckBar();
+    }
+
+    public int DetermineWeight(string letter)
+    {
+        int weight;
+
+        if (scoreOf5.Contains(letter)) weight = 5;
+        else if (scoreOf4.Contains(letter)) weight = 4;
+        else if (scoreOf3.Contains(letter)) weight = 3;
+        else if (scoreOf2.Contains(letter)) weight = 2;
+        else if (scoreOf1.Contains(letter)) weight = 1;
+        else weight = 0;
+
+        return weight;
+    }
+
+    public int CalculateScore()
+    {
+        float _score = 0;
+        float cumulativeScoreMods = 0f;
+
+        foreach (var item in storedString)
+        {
+            _score += DetermineWeight(item.ToString());
+        }
+
+        foreach (var item in temporalLetterPlace)
+        {
+            switch (item.powerUpType)
+            {
+                case PowerUpTypes.NORMAL:
+                    break;
+                case PowerUpTypes.POWER1:
+                    cumulativeScoreMods += power1mod;
+                    break;
+                case PowerUpTypes.POWER2:
+                    cumulativeScoreMods += power2mod;
+                    break;
+                case PowerUpTypes.POWER3:
+                    cumulativeScoreMods += power3mod;
+                    break;
+                default:
+                    break;
+            }
+        }
+        //print((int)score + " * " + cumulativeScoreMods + " = " + score * cumulativeScoreMods);
+        _score += _score * cumulativeScoreMods;
+        //print((int)score);
+        return (int)_score;
     }
 }

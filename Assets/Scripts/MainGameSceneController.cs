@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.UI;
 
 public enum LevelType { TIME_LETTER }
 
@@ -14,9 +15,10 @@ public class MainGameSceneController : UIController
 
     public DisplayPageTextHandler[] displayPages;
     public GameObject displayTextPrefab;
-    public CanvasGroup winWindow, loseWindow;
+    public CanvasGroup windowStart, windowPause;
     public GameObject shade;
     public TextMeshProUGUI indicatorText, scoreText;
+    public GridLayout gridLayoutActiveLetter;
     public string[] indicatorTextContent;
     public int maximumPageDisplayText;
     public float cumulativeScore;
@@ -48,6 +50,7 @@ public class MainGameSceneController : UIController
 
     private void Start()
     {
+        GameManager.Instance.PlayBgm("Gameplay");
         indicatorText.gameObject.SetActive(false);
         scoreText.text = "0";
         //Destroy all child upon start on LetterActivePlace
@@ -55,6 +58,8 @@ public class MainGameSceneController : UIController
         {
             Destroy(item.gameObject);
         }
+
+        Time.timeScale = 0f;
     }
 
     public void OpenShade()
@@ -65,18 +70,38 @@ public class MainGameSceneController : UIController
     public void OpenLoseWindow()
     {
         OpenShade();
-        StartCoroutine(FadeIn(loseWindow, 0.4f));
+        StartCoroutine(ShadeToDark());
     }
 
-    public void CloseShade()
+    public IEnumerator ShadeToDark()
     {
+        Image shadeAlpha = shade.GetComponent<Image>();
+        while (shadeAlpha.color.a < 1)
+        {
+            shadeAlpha.color = new Color(shadeAlpha.color.r, shadeAlpha.color.g, shadeAlpha.color.b, shadeAlpha.color.a + 0.005f);
+            yield return new WaitForSeconds(1f);
+        }
+
+        yield return new WaitForSeconds(0.8f);
+        LoadScene("ResultScene");
+    }
+
+    public void CloseShade(float time = 0f)
+    {
+        StartCoroutine(CloseShadeAnimation(time));
+    }
+
+    private IEnumerator CloseShadeAnimation(float time)
+    {
+        yield return new WaitForSeconds(time);
         shade.SetActive(false);
     }
 
-    public void CloseLoseWindow()
+    public void ClosePauseWindow()
     {
         CloseShade();
-        StartCoroutine(FadeOut(loseWindow, 0.4f));
+        StartCoroutine(FadeOut(windowPause, 0.15f));
+        Time.timeScale = 1f;
     }
 
     public void OpenIndicatorText()
@@ -84,6 +109,7 @@ public class MainGameSceneController : UIController
         indicatorText.text = indicatorTextContent[BattleController.Instance.storedString.Length - BattleController.Instance.minimalLetterCount];
         if (indicatorAnimation != null) StopCoroutine(indicatorAnimation);
         indicatorAnimation = StartCoroutine(StartIndicatorText());
+        GameManager.Instance.PlaySfx(BattleController.Instance.storedString.Length + " Letters");
     }
 
     private IEnumerator StartIndicatorText()
@@ -116,6 +142,7 @@ public class MainGameSceneController : UIController
             }
             //Flip the Page Codes here
             parent = displayPages[0].transform;
+            BattleController.Instance.SpawnPowerUp(PowerUpTypes.POWER1);
         }
 
         GameObject displayText = Instantiate(displayTextPrefab, parent);
@@ -124,12 +151,21 @@ public class MainGameSceneController : UIController
 
     public void UpdateScore()
     {
-        cumulativeScore += GameManager.Instance.CalculateScore();
+        cumulativeScore += BattleController.Instance.CalculateScore();
         scoreText.text = cumulativeScore.ToString();
     }
 
-    public void EndGame()
+    public void PauseGame()
     {
-        LoadScene("ResultScene");
+        OpenShade();
+        StartCoroutine(FadeIn(windowPause, 0.15f));
+        Time.timeScale = 0f;
+    }
+
+    public void StartGame()
+    {
+        Time.timeScale = 1f;
+        StartCoroutine(FadeOut(windowStart, 0.15f));
+        CloseShade(0.15f);
     }
 }

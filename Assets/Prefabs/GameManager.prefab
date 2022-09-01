@@ -44,14 +44,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audio:
-    soundEffects: []
-    backgroundMusics: []
+    soundEffects:
+    - name: 3 Letters
+      clip: {fileID: 8300000, guid: 93ce681eb5c122c449ad780126ae4c52, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 4 Letters
+      clip: {fileID: 8300000, guid: c95cc47dca4dd6c4b819bc38ed239c74, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 5 Letters
+      clip: {fileID: 8300000, guid: 3efc165a03d184e4ca4e00203d1c6e9d, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 6 Letters
+      clip: {fileID: 8300000, guid: 26e4ffce0bcb33d45b5deca9d6195996, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 7 Letters
+      clip: {fileID: 8300000, guid: 24f3517af7f243147b3d2f9391a37dd1, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    backgroundMusics:
+    - name: Menu
+      clip: {fileID: 8300000, guid: eb91b658971da174aacdf4d5cd8e9396, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 1
+      audioSource: {fileID: 0}
+    - name: Gameplay
+      clip: {fileID: 8300000, guid: a4d0bcb7de2fdfa4d8bb0747501ee044, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 1
+      audioSource: {fileID: 0}
     activeSfx: []
     activeBgm: []
+  currentUserSessionID: 
   loadedTextFileName: words_alpha
   wordsDictionary: []
-  scoreOf5: XZ
-  scoreOf4: JKQ
-  scoreOf3: VWY
-  scoreOf2: BCFHMP
-  scoreOf1: ADEGILNORSTU
