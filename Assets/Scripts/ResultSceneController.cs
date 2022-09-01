@@ -25,7 +25,12 @@ public class ResultSceneController : UIController
     void Start()
     {
         GameManager.Instance.PlayBgm("Menu");
-        StartCoroutine(GameManager.Instance.RequestGetScore());        
+        StartCoroutine(GameManager.Instance.RequestGetScore());
+
+        foreach (Transform item in entryParent.transform)
+        {
+            Destroy(item.gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -44,7 +49,7 @@ public class ResultSceneController : UIController
         GameManager bc = GameManager.Instance;
         List<LeaderboardScoreEntry> entryList = new List<LeaderboardScoreEntry>();
 
-        for (int i = 0; i < bc.userScoreDB.userScoreJSONList.Count; i++)
+        for (int i = 0; i < bc.userScoreDB.results.Count; i++)
         {
             entryList.Add(Instantiate(entryPrefab, entryParent).GetComponent<LeaderboardScoreEntry>());
         }
@@ -55,10 +60,11 @@ public class ResultSceneController : UIController
     private void DataEntry(List<LeaderboardScoreEntry> entryList)
     {
         GameManager bc = GameManager.Instance;
-        for (int i = 0; i < bc.userScoreDB.userScoreJSONList.Count; i++)
+        for (int i = 0; i < bc.userScoreDB.results.Count; i++)
         {
-            entryList[i].nickname.text = i + 1 + ". " + bc.userScoreDB.userScoreJSONList[i].nickname;
-            entryList[i].score.text = bc.userScoreDB.userScoreJSONList[i].score.ToString();
+
+            entryList[i].nickname.text = i + 1 + ". " + bc.userScoreDB.results[i].nickname;
+            entryList[i].score.text = bc.userScoreDB.results[i].score.ToString();
         }
     }
 
@@ -69,9 +75,9 @@ public class ResultSceneController : UIController
 
     public void LeaderboardGetScore()
     {
-        print(GameManager.Instance.userScoreDB.userScoreJSONList.Count);
+        print(GameManager.Instance.userScoreDB.results.Count);
         List<LeaderboardScoreEntry> entryList = SetupEntry();
-        GameManager.Instance.userScoreDB.userScoreJSONList.Sort(SortByScore);
+        GameManager.Instance.userScoreDB.results.Sort(SortByScore);
         DataEntry(entryList);
     }
 }

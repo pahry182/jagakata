@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     [Serializable]
     public class UserScoreList
     {
-        public List<UserScore> userScoreJSONList;
+        public List<UserScore> results;
     }
 
     [Serializable]
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
             print(request.result);
             //print(request.downloadHandler.text);
 
-            string json = "{ \"userScoreJSONList\" : " + request.downloadHandler.text + "}";
+            string json = request.downloadHandler.text;
             print(json);
             userScoreDB = JsonUtility.FromJson<UserScoreList>(json);
         }
