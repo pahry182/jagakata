@@ -130,6 +130,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (8)
@@ -311,6 +319,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1064237080}
         m_TargetAssemblyTypeName: MainGameSceneController, Assembly-CSharp
         m_MethodName: ClosePauseWindow
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1064237080}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ButtonSFX
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -795,6 +815,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1064237080}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ButtonSFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &122728961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1163,6 +1195,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (12)
@@ -1265,6 +1305,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (2)
@@ -1454,6 +1502,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1064237080}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ButtonSFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &485961814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1565,6 +1625,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (1)
@@ -1764,6 +1832,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (9)
@@ -1866,6 +1942,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (13)
@@ -2065,6 +2149,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (15)
@@ -2243,6 +2335,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (10)
@@ -2569,6 +2669,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (4)
@@ -2750,6 +2858,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1064237080}
         m_TargetAssemblyTypeName: MainGameSceneController, Assembly-CSharp
         m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1064237080}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ButtonSFX
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3078,6 +3198,9 @@ MonoBehaviour:
   indicatorText: {fileID: 844886784}
   scoreText: {fileID: 1755305001}
   gridLayoutActiveLetter: {fileID: 0}
+  submitAcceptedSprite: {fileID: -7920613728617911633, guid: 036920bc04d5f3646a04fd5a00f79750, type: 3}
+  submitNotAcceptedSprite: {fileID: -7165590083738013945, guid: 036920bc04d5f3646a04fd5a00f79750, type: 3}
+  submitButton: {fileID: 2135682938}
   indicatorTextContent:
   - Good
   - Nice
@@ -3086,9 +3209,6 @@ MonoBehaviour:
   - Outstanding
   maximumPageDisplayText: 4
   cumulativeScore: 0
-  enemyName: Reika
-  enemyRealName: Leika
-  levelType: 0
   maxBarProgression: 100
   incrementBarProgression: 0
   decrementAcakBarProgression: 2.5
@@ -3101,6 +3221,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (3)
@@ -3695,6 +3823,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (11)
@@ -4001,6 +4137,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (7)
@@ -4402,6 +4546,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (14)
@@ -4810,6 +4962,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (6)
@@ -4912,6 +5072,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter (5)
@@ -5135,7 +5303,7 @@ GameObject:
   - component: {fileID: 2135682939}
   - component: {fileID: 2135682938}
   m_Layer: 5
-  m_Name: Button Attack
+  m_Name: Button Submit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5216,6 +5384,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1064237080}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ButtonSFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2135682939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5236,7 +5416,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7920613728617911633, guid: 036920bc04d5f3646a04fd5a00f79750, type: 3}
+  m_Sprite: {fileID: -7165590083738013945, guid: 036920bc04d5f3646a04fd5a00f79750, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5373,6 +5553,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6339266210141908927, guid: 206e87bc070f74d4ba030efe8bb2aa15, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
     - target: {fileID: 6339266210489948008, guid: 206e87bc070f74d4ba030efe8bb2aa15, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5847,6 +6031,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 716185149}
     m_Modifications:
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1064237080}
+    - target: {fileID: 8545374229417675712, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ButtonSFX
+      objectReference: {fileID: 0}
     - target: {fileID: 8545374229417675714, guid: f94ec412d7f21d945b179c6700853ec7, type: 3}
       propertyPath: m_Name
       value: Button Letter

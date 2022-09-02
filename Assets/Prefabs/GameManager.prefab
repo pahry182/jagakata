@@ -46,31 +46,37 @@ MonoBehaviour:
   audio:
     soundEffects:
     - name: 3 Letters
-      clip: {fileID: 8300000, guid: 93ce681eb5c122c449ad780126ae4c52, type: 3}
+      clip: {fileID: 8300000, guid: fb0b5b699b5ac754c836ab9b961c1e6f, type: 3}
       volume: 1
       pitch: 1
       loop: 0
       audioSource: {fileID: 0}
     - name: 4 Letters
-      clip: {fileID: 8300000, guid: c95cc47dca4dd6c4b819bc38ed239c74, type: 3}
+      clip: {fileID: 8300000, guid: 752b57277942173468e10ecb91f80ac8, type: 3}
       volume: 1
       pitch: 1
       loop: 0
       audioSource: {fileID: 0}
     - name: 5 Letters
-      clip: {fileID: 8300000, guid: 3efc165a03d184e4ca4e00203d1c6e9d, type: 3}
+      clip: {fileID: 8300000, guid: e3e1ddd3bdc9dbc45aa7362824dd2a26, type: 3}
       volume: 1
       pitch: 1
       loop: 0
       audioSource: {fileID: 0}
     - name: 6 Letters
-      clip: {fileID: 8300000, guid: 26e4ffce0bcb33d45b5deca9d6195996, type: 3}
+      clip: {fileID: 8300000, guid: 74163aafac2bd754f846b487819d409b, type: 3}
       volume: 1
       pitch: 1
       loop: 0
       audioSource: {fileID: 0}
     - name: 7 Letters
-      clip: {fileID: 8300000, guid: 24f3517af7f243147b3d2f9391a37dd1, type: 3}
+      clip: {fileID: 8300000, guid: 57cb2d08b01a4a2458b207d755d6297c, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: ButtonHit
+      clip: {fileID: 8300000, guid: f48952209089a654e8944598c153987f, type: 3}
       volume: 1
       pitch: 1
       loop: 0
@@ -90,6 +96,8 @@ MonoBehaviour:
       audioSource: {fileID: 0}
     activeSfx: []
     activeBgm: []
+  userScoreDB:
+    results: []
   currentUserSessionID: 
   loadedTextFileName: words_alpha
   wordsDictionary: []

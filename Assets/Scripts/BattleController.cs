@@ -10,6 +10,7 @@ public class BattleController : MonoBehaviour
     public static BattleController Instance { internal set; get; }
 
     private MainGameSceneController gameSceneController;
+    private bool isLose;
 
     public Image progressBar;
     public Transform[] letterButtonTransforms;
@@ -61,7 +62,6 @@ public class BattleController : MonoBehaviour
     private void Start()
     {
         gameSceneController = MainGameSceneController.Instance;
-        DetermineLevelType();
     }
 
     private void Update()
@@ -115,7 +115,7 @@ public class BattleController : MonoBehaviour
 
         foreach (var item in temporalLetterPlace)
         {
-            if (item.isPlaced) item.UseLetterButton();
+            if (item.isPlaced) item.SystemReturnLetterNonInstant();
         }
 
         foreach (var item in letterButtons) item.GetComponent<Button>().interactable = false;
@@ -162,6 +162,7 @@ public class BattleController : MonoBehaviour
             }
 
             temporalLetterPlace = new List<LetterButton>();
+            MainGameSceneController.Instance.ToggleSubmitButtonSprite(false);
         }
     }
 
@@ -178,8 +179,10 @@ public class BattleController : MonoBehaviour
 
     public void SpawnPowerUp(PowerUpTypes type)
     {
-        int randomPos = UnityEngine.Random.Range(0, letterButtonTransforms.Length);
+        if (type == PowerUpTypes.NORMAL) return;
 
+        int randomPos = UnityEngine.Random.Range(0, letterButtonTransforms.Length);
+        StartCoroutine(PlayPowerUpSpawnSFX());
         while (true)
         {
             if (letterButtons[randomPos].powerUpType == PowerUpTypes.NORMAL)
@@ -192,6 +195,15 @@ public class BattleController : MonoBehaviour
                 randomPos = UnityEngine.Random.Range(0, letterButtonTransforms.Length);
             }
         }
+    }
+
+    private IEnumerator PlayPowerUpSpawnSFX()
+    {
+        GameManager.Instance.PlaySfx("7 Letters");
+        yield return new WaitForSeconds(0.07f);
+        GameManager.Instance.PlaySfx("5 Letters");
+        yield return new WaitForSeconds(0.07f);
+        GameManager.Instance.PlaySfx("6 Letters");
     }
 
     public bool CheckWord()
@@ -221,24 +233,10 @@ public class BattleController : MonoBehaviour
 
     private void LoseGame()
     {
-        StartCoroutine(GameManager.Instance.RequestPutScore(GameManager.Instance.currentUserSessionID, (int)MainGameSceneController.Instance.cumulativeScore));
+        if (!isLose) GameManager.Instance.RequestPutScoreMethod();
+        isLose = true;
+        
         gameSceneController.OpenLoseWindow();
-    }
-
-    //private void WinGame()
-    //{
-    //    if (gameSceneController.currentEnemyProgression != gameSceneController.maxBarProgression) return;
-    //}
-
-    private void DetermineLevelType()
-    {
-        switch (gameSceneController.levelType)
-        {
-            case LevelType.TIME_LETTER:
-                break;
-            default:
-                break;
-        }
     }
 
     private void UpdateProgression()

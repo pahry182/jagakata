@@ -268,6 +268,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ButtonSFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7775489567359118418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,3 +296,4 @@ MonoBehaviour:
   ghostButtonPrefab: {fileID: 4788033376158435168, guid: b9153bf93d22b554a9815e8b59b86753, type: 3}
   isPlaced: 0
   lastPos: {x: 0, y: 0}
+  powerUpType: 0

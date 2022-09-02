@@ -19,15 +19,14 @@ public class MainGameSceneController : UIController
     public GameObject shade;
     public TextMeshProUGUI indicatorText, scoreText;
     public GridLayout gridLayoutActiveLetter;
+    public Sprite submitAcceptedSprite, submitNotAcceptedSprite;
+    public Button submitButton;
     public string[] indicatorTextContent;
     public int maximumPageDisplayText;
     public float cumulativeScore;
     
 
     [Header("Level Design")]
-    public string enemyName;
-    public string enemyRealName;
-    public LevelType levelType = LevelType.TIME_LETTER;
     public int maxBarProgression;
     public float incrementBarProgression;
     public float decrementAcakBarProgression, decrementTimeBarProgression;
@@ -60,6 +59,12 @@ public class MainGameSceneController : UIController
         }
 
         Time.timeScale = 0f;
+    }
+
+    public void ToggleSubmitButtonSprite(bool condition)
+    {
+        if (condition) submitButton.image.sprite = submitAcceptedSprite;
+        else submitButton.image.sprite = submitNotAcceptedSprite;
     }
 
     public void OpenShade()

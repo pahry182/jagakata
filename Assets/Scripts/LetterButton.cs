@@ -56,6 +56,19 @@ public class LetterButton : MonoBehaviour
         bc.RemoveLetterPlace(this);
     }
 
+    public void SystemReturnLetterNonInstant()
+    {
+        BattleController bc = BattleController.Instance;
+        float duration = 0.3f;
+        isPlaced = false;
+        transform.SetParent(bc.canvas);
+        transform.DOScale(1.28f, duration);
+        transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
+        bc.RemoveLetterPlace(this);
+        bc.temporalLetterPlace.Remove(this);
+        CheckWordIndicator(false);
+    }
+
     private void SetParentToLetterActivePlace()
     {
         transform.SetParent(BattleController.Instance.letterActivePlace);
@@ -86,6 +99,8 @@ public class LetterButton : MonoBehaviour
             transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
             bc.RemoveLetterPlace(this);
             bc.temporalLetterPlace.Remove(this);
+
+            CheckWordIndicator();
         }
         else
         {
@@ -99,11 +114,19 @@ public class LetterButton : MonoBehaviour
             //Destroy(ghostButton, duration);
             transform.DOMove(bc.letterActivePlace.transform.position, duration).onComplete = SetParentToLetterActivePlace;
             transform.DOScale(0.78f, duration).onComplete = SetScaleToNormal;
-            if (bc.CheckWord())
-            {
-                MainGameSceneController.Instance.OpenIndicatorText();
-            }
+            CheckWordIndicator();
         }
+    }
+
+    private void CheckWordIndicator(bool IsOpeningIndicatorText = true)
+    {
+        if (BattleController.Instance.CheckWord())
+        {
+            if (IsOpeningIndicatorText) MainGameSceneController.Instance.OpenIndicatorText();
+
+            MainGameSceneController.Instance.ToggleSubmitButtonSprite(true);
+        }
+        else MainGameSceneController.Instance.ToggleSubmitButtonSprite(false);
     }
 
     public void UpdateLetterButtonTypes(PowerUpTypes type)
