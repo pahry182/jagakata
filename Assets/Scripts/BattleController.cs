@@ -36,6 +36,7 @@ public class BattleController : MonoBehaviour
 
     private LetterButton[] letterButtons = new LetterButton[16];
     private LetterButton[] movingLetters;
+    private ScoreAnimationHandler _sah;
     [HideInInspector] public List<LetterButton> temporalLetterPlace = new List<LetterButton>();
 
 
@@ -62,6 +63,7 @@ public class BattleController : MonoBehaviour
     private void Start()
     {
         gameSceneController = MainGameSceneController.Instance;
+        _sah = GetComponent<ScoreAnimationHandler>();
     }
 
     private void Update()
@@ -141,7 +143,8 @@ public class BattleController : MonoBehaviour
     {
         if (CheckWord())
         {
-            gameSceneController.UpdateScore();
+            _sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
+            //gameSceneController.UpdateScore();
             AdvanceBarProgression();
 
             foreach (var item in temporalLetterPlace) item.UpdateLetterButtonTypes(PowerUpTypes.NORMAL);
@@ -215,7 +218,7 @@ public class BattleController : MonoBehaviour
 
     private void AdvanceBarProgression()
     {
-        gameSceneController.currentBarProgression += CalculateScore();
+        gameSceneController.currentBarProgression = Mathf.Clamp(gameSceneController.currentBarProgression + CalculateScore(), 0, gameSceneController.maxBarProgression);
     }
 
     private void CheckBar()
@@ -241,7 +244,17 @@ public class BattleController : MonoBehaviour
 
     private void UpdateProgression()
     {
-        gameSceneController.currentBarProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
+        if (gameSceneController.extraProgression > 0)
+        {
+            gameSceneController.barProgression.color = Color.cyan;
+            gameSceneController.extraProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
+        }
+        else
+        {
+            gameSceneController.barProgression.color = new Color32(119, 107, 171, 255); //776BAB hex
+            gameSceneController.currentBarProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
+        }
+        
         CheckBar();
     }
 
@@ -280,9 +293,11 @@ public class BattleController : MonoBehaviour
                     break;
                 case PowerUpTypes.POWER2:
                     cumulativeScoreMods += power2mod;
+                    gameSceneController.extraProgression += 2;
                     break;
                 case PowerUpTypes.POWER3:
                     cumulativeScoreMods += power3mod;
+                    gameSceneController.extraProgression += 5;
                     break;
                 default:
                     break;

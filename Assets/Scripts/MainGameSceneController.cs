@@ -18,9 +18,9 @@ public class MainGameSceneController : UIController
     public CanvasGroup windowStart, windowPause;
     public GameObject shade;
     public TextMeshProUGUI indicatorText, scoreText;
-    public GridLayout gridLayoutActiveLetter;
     public Sprite submitAcceptedSprite, submitNotAcceptedSprite;
     public Button submitButton;
+    public Image barProgression;
     public string[] indicatorTextContent;
     public int maximumPageDisplayText;
     public float cumulativeScore;
@@ -31,7 +31,7 @@ public class MainGameSceneController : UIController
     public float incrementBarProgression;
     public float decrementAcakBarProgression, decrementTimeBarProgression;
     
-    [HideInInspector] public float currentBarProgression;
+    [HideInInspector] public float currentBarProgression, extraProgression;
 
     private void Awake()
     {
@@ -154,9 +154,9 @@ public class MainGameSceneController : UIController
         displayText.GetComponent<TextMeshProUGUI>().text = _text;
     }
 
-    public void UpdateScore()
+    public void UpdateScore(int score)
     {
-        cumulativeScore += BattleController.Instance.CalculateScore();
+        cumulativeScore += score;
         scoreText.text = cumulativeScore.ToString();
     }
 
