@@ -14,7 +14,7 @@ public class BattleController : MonoBehaviour
 
     public Image progressBar;
     public Transform[] letterButtonTransforms;
-    public Vector2[] letterButtonPositions;
+    public Vector3[] letterButtonPositions;
     public Transform letterActivePlace;
     public Transform letterContainer;
     public Transform canvas;
@@ -55,6 +55,7 @@ public class BattleController : MonoBehaviour
         foreach (var item in letterButtonTransforms)
         {
             letterButtonPositions[index] = item.position;
+            letterButtonPositions[index].z = 0;
             letterButtons[index] = item.GetComponent<LetterButton>();
             index++;
         }
@@ -69,6 +70,7 @@ public class BattleController : MonoBehaviour
     private void Update()
     {
         UpdateProgression();
+        letterButtonTransforms[0].
     }
 
     public int GetIndexLetterButton(Transform letterButton)
@@ -230,7 +232,7 @@ public class BattleController : MonoBehaviour
         }
         else
         {
-            progressBar.fillAmount = gameSceneController.currentBarProgression / gameSceneController.maxBarProgression;
+            MainGameSceneController.Instance.fireProgression.startLifetime = (gameSceneController.currentBarProgression / gameSceneController.maxBarProgression)*2;
         }
     }
 

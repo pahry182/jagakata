@@ -21,6 +21,7 @@ public class MainGameSceneController : UIController
     public Sprite submitAcceptedSprite, submitNotAcceptedSprite;
     public Button submitButton;
     public Image barProgression;
+    public ParticleSystem fireProgression;
     public string[] indicatorTextContent;
     public int maximumPageDisplayText;
     public float cumulativeScore;
