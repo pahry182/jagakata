@@ -70,7 +70,6 @@ public class BattleController : MonoBehaviour
     private void Update()
     {
         UpdateProgression();
-        letterButtonTransforms[0].
     }
 
     public int GetIndexLetterButton(Transform letterButton)
@@ -126,7 +125,11 @@ public class BattleController : MonoBehaviour
 
         StartCoroutine(AnimationGenerateLetter());
 
-        gameSceneController.currentBarProgression -= gameSceneController.decrementAcakBarProgression;
+        if (gameSceneController.extraProgression <= 0)
+        {
+            gameSceneController.currentBarProgression -= gameSceneController.decrementAcakBarProgression;
+        }
+        
         CheckBar();
     }
 
@@ -227,7 +230,7 @@ public class BattleController : MonoBehaviour
     {
         if (gameSceneController.currentBarProgression < 0)
         {
-            progressBar.fillAmount = 0;
+            //progressBar.fillAmount = 0;
             LoseGame();
         }
         else
@@ -248,12 +251,14 @@ public class BattleController : MonoBehaviour
     {
         if (gameSceneController.extraProgression > 0)
         {
-            gameSceneController.barProgression.color = Color.cyan;
+            //gameSceneController.barProgression.color = Color.cyan;
+            gameSceneController.fireProgression.startColor = new Color32(122, 255, 255, 255);
             gameSceneController.extraProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
         }
         else
         {
-            gameSceneController.barProgression.color = new Color32(119, 107, 171, 255); //776BAB hex
+            //gameSceneController.barProgression.color = new Color32(119, 107, 171, 255); //776BAB hex
+            gameSceneController.fireProgression.startColor = new Color32(255, 255, 255, 255);
             gameSceneController.currentBarProgression -= Time.deltaTime * gameSceneController.decrementTimeBarProgression;
         }
         

@@ -108,14 +108,19 @@ public class MainGameSceneController : UIController
         CloseShade();
         StartCoroutine(FadeOut(windowPause, 0.15f));
         Time.timeScale = 1f;
+        foreach (Transform item in BattleController.Instance.letterButtonTransforms)
+        {
+            item.gameObject.SetActive(true);
+        }
     }
 
     public void OpenIndicatorText()
     {
-        indicatorText.text = indicatorTextContent[BattleController.Instance.storedString.Length - BattleController.Instance.minimalLetterCount];
+        int num = Mathf.Clamp(BattleController.Instance.storedString.Length - BattleController.Instance.minimalLetterCount, 0, indicatorTextContent.Length - 1);
+        indicatorText.text = indicatorTextContent[num];
         if (indicatorAnimation != null) StopCoroutine(indicatorAnimation);
         indicatorAnimation = StartCoroutine(StartIndicatorText());
-        GameManager.Instance.PlaySfx(BattleController.Instance.storedString.Length + " Letters");
+        GameManager.Instance.PlaySfx((num + BattleController.Instance.minimalLetterCount) + " Letters");
     }
 
     private IEnumerator StartIndicatorText()
@@ -166,6 +171,10 @@ public class MainGameSceneController : UIController
         OpenShade();
         StartCoroutine(FadeIn(windowPause, 0.15f));
         Time.timeScale = 0f;
+        foreach (Transform item in BattleController.Instance.letterButtonTransforms)
+        {
+            item.gameObject.SetActive(false);
+        }
     }
 
     public void StartGame()

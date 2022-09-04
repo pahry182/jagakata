@@ -66,7 +66,7 @@ public class LetterButton : MonoBehaviour
         transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
         bc.RemoveLetterPlace(this);
         bc.temporalLetterPlace.Remove(this);
-        CheckWordIndicator(false);
+        MainGameSceneController.Instance.ToggleSubmitButtonSprite(false);
     }
 
     private void SetParentToLetterActivePlace()
