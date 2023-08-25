@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Diagnostics;
 
 public class BattleController : MonoBehaviour
 {
@@ -67,6 +68,7 @@ public class BattleController : MonoBehaviour
         _sah = GetComponent<ScoreAnimationHandler>();
     }
 
+    [Obsolete]
     private void Update()
     {
         UpdateProgression();
@@ -107,6 +109,7 @@ public class BattleController : MonoBehaviour
         storedString = temp_string;
     }
 
+    [Obsolete]
     public void AcakButton()
     {
         List<LetterButton> temporalLetterPlace = new List<LetterButton>();
@@ -144,6 +147,7 @@ public class BattleController : MonoBehaviour
         foreach (var item in letterButtons) item.GetComponent<Button>().interactable = true;
     }
 
+    [Obsolete]
     public void PasangButton()
     {
         if (CheckWord())
@@ -216,8 +220,22 @@ public class BattleController : MonoBehaviour
 
     public bool CheckWord()
     {
-        if (storedIndexLetters.Count >= minimalLetterCount) 
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        
+
+        if (storedIndexLetters.Count >= minimalLetterCount)
+        {
+            stopwatch.Stop();
+            print("Time elapsed: " + stopwatch.Elapsed);
+
             return Array.Exists(GameManager.Instance.wordsDictionary, jawaban => jawaban == storedString.ToLower());
+        }
+
+        stopwatch.Stop();
+        print("Time elapsed: " + stopwatch.Elapsed);
+
         return false;
     }
 
@@ -226,6 +244,7 @@ public class BattleController : MonoBehaviour
         gameSceneController.currentBarProgression = Mathf.Clamp(gameSceneController.currentBarProgression + CalculateScore(), 0, gameSceneController.maxBarProgression);
     }
 
+    [Obsolete]
     private void CheckBar()
     {
         if (gameSceneController.currentBarProgression < 0)
@@ -247,6 +266,7 @@ public class BattleController : MonoBehaviour
         gameSceneController.OpenLoseWindow();
     }
 
+    [Obsolete]
     private void UpdateProgression()
     {
         if (gameSceneController.extraProgression > 0)
