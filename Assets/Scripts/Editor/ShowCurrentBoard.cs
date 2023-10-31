@@ -20,5 +20,10 @@ public class ShowCurrentBoard : Editor
         {
             myGameObject.ShowCurrentBoard();
         }
+        if (GUILayout.Button("Print Dictionary"))
+        {
+            myGameObject.ShowDict();
+        }
+
     }
 }

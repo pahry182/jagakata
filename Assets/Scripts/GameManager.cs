@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public string currentUserSessionID;
     public string loadedTextFileName;
     public string[] wordsDictionary;
+    public Dictionary<string, string> wordsDictionaryNew;
 
     [Serializable]
     public class UserScoreList

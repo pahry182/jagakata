@@ -39,4 +39,27 @@ public class Util : MonoBehaviour
 
         return randomAlphabet;
     }
+
+    public static List<XYPoint> DeepCopyList(List<XYPoint> originalList)
+    {
+        if (originalList == null)
+        {
+            return null;
+        }
+
+        List<XYPoint> newList = new List<XYPoint>();
+
+        foreach (XYPoint item in originalList)
+        {
+            if (item != null)
+            {
+                // Create a new XYPoint instance and copy the values from the original item.
+                XYPoint newItem = new XYPoint(item.X, item.Y);
+                newList.Add(newItem);
+            }
+        }
+
+        return newList;
+    }
+
 }

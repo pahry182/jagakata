@@ -4,44 +4,57 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
+    public static Board Instance { set; get; }
+    public Util util;
+    public Transform canvas;
+
     public const int BOARD_SIZE = 4;
-    public const int INROW = 4;
     public const int MINIMAL_LETTER_COUNT = 3;
-    //public const char TURN_X = '1';
-    //public const char TURN_O = '2';
 
-    public const int RESULT_NONE = -1;
-    public const int RESULT_DRAW = 0;
-    public const int RESULT_X = 1;
-    public const int RESULT_O = 2;
+    public const int RESULT_NONE = 0;
+    public const int RESULT_NO_MORE_LETTER = -1;
+    
+    [HideInInspector] public char[][] boardState;
+    [HideInInspector] public char[][] boardSelectionState;
+    [HideInInspector] public char[] storedLetters;
+    [HideInInspector] public int[] storedIndexLetters;
+    [HideInInspector] public int result;
+    [HideInInspector] public int pieceNumber;
+    [HideInInspector] public XYPoint lastSelectedPos;
+    
+    [HideInInspector] public bool isStarted;
+    [HideInInspector] public bool isLocked;
+    [HideInInspector] public List<XYPoint> currentBestConfig = new List<XYPoint>();
+    [HideInInspector] public int currentBestScore;
 
-    //public float startX, startY;
     public GameObject letterBoxPrefab;
     public List<Square> letterBoxes;
     public string loadedTextFileName;
     public string[] wordsDictionary;
-    [HideInInspector] public char[][] boardState;
-    [HideInInspector] public int pieceNumber;
-    [HideInInspector] public char currentTurn;
-    [HideInInspector] public Point lastPos, lastOPos;
-    [HideInInspector] public int result;
-    [HideInInspector] public Point[] winningPoints;
-
-    [HideInInspector] public bool isStarted;
-    [HideInInspector] public bool isLocked;
-
+    public Dictionary<string, string> wordsDictionaryNew = new Dictionary<string, string>();
     private ChildrenArranger childrenArranger;
+
+    [Header("Letter Weight")]
+    public string scoreOf5;
+    public string scoreOf4;
+    public string scoreOf3;
+    public string scoreOf2;
+    public string scoreOf1;
+
+    [HideInInspector] public List<Square> temporalLetterPlace = new List<Square>();
+    public Transform letterActivePlace;
 
     private void Awake()
     {
-        
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        isStarted = false;
-        isLocked = false;
+        //isStarted = false;
+        //isLocked = false;
     }
 
     // Update is called once per frame
@@ -56,15 +69,19 @@ public class Board : MonoBehaviour
         string txt = file.ToString();
         char[] separators = new char[] { ' ', ',' };
         wordsDictionary = txt.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+        for (int i = 0; i < wordsDictionary.Length; i++)
+        {
+            if (!wordsDictionaryNew.ContainsKey(wordsDictionary[i])) wordsDictionaryNew.Add(wordsDictionary[i], wordsDictionary[i]);
+        }
     }
 
     public void InitBoard()
     {
-        InitDict();
-        //currentTurn = TURN_X;
+        lastSelectedPos = null;
         pieceNumber = 0;
-        lastPos = null;
-        lastOPos = null;
+        currentBestScore = 0;
+        currentBestConfig = new List<XYPoint>();
         result = RESULT_NONE;
 
         //removes all child
@@ -78,15 +95,16 @@ public class Board : MonoBehaviour
         }
 
         //init boardState       
-        Util util = GetComponent<Util>();
         boardState = new char[BOARD_SIZE][];
+        boardSelectionState = new char[BOARD_SIZE][];
         for (int i = 0; i < boardState.Length; i++)
         {
             boardState[i] = new char[BOARD_SIZE];
+            boardSelectionState[i] = new char[BOARD_SIZE];
             for (int j = 0; j < boardState[i].Length; j++)
             {
-                char randomChar = util.GetRandomAlphabet();
-                boardState[i][j] = randomChar;
+                boardState[i][j] = util.GetRandomAlphabet();
+                boardSelectionState[i][j] = Square.NOT_SELECTED;
             }
         }
 
@@ -96,8 +114,8 @@ public class Board : MonoBehaviour
             for (int j = 0; j < boardState[i].Length; j++)
             {
                 Square letterBox = Instantiate(letterBoxPrefab, transform).GetComponent<Square>();
-                letterBox.posX = j;
-                letterBox.posY = i;
+                letterBox.posX = i;
+                letterBox.posY = j;
                 letterBox.containedLetter = boardState[i][j];
                 letterBox.UpdateSquare();
                 letterBoxes.Add(letterBox);
@@ -105,6 +123,14 @@ public class Board : MonoBehaviour
         }
 
         childrenArranger.ArrangeChilds();
+        //for (int i = 0; i < boardState.Length; i++)
+        //{
+        //    for (int j = 0; j < boardState[i].Length; j++)
+        //    {
+        //        print(boardState[i][j]);
+        //        print(boardSelectionState[i][j]);
+        //    }
+        //}
     }
 
     public void ShowCurrentBoard()
@@ -122,6 +148,19 @@ public class Board : MonoBehaviour
         print(printable);
     }
 
+    public void ShowDict()
+    {
+        int count = 0;
+
+        foreach (KeyValuePair<string, string> item in wordsDictionaryNew)
+        {
+            print(item.Key);
+            count++;
+            if (count == 100) return;
+        }
+        
+    }
+
     public void SelectSquare(int posX, int posY)
     {
         //TODO optimize?
@@ -129,11 +168,11 @@ public class Board : MonoBehaviour
         {
             if (square.posX == posX && square.posY == posY)
             {
-                if (square.status == Square.SQUARE_EMPTY)
+                if (square.status == Square.NOT_SELECTED)
                 {
-                    square.status = currentTurn;
-                    //updateSquare(posX, posY, square.status);
-                    //switchTurn();
+                    square.status = Square.SELECTED;
+
+                    UpdateSquare(posX, posY, square.status);
                 }
                 else
                 {
@@ -144,42 +183,69 @@ public class Board : MonoBehaviour
         }
     }
 
-    //public void updateSquare(int x, int y, char currTurn)
+    public void UpdateSquare(int x, int y, char status)
+    {
+        boardState[x][y] = status;
+        pieceNumber++;
+        lastSelectedPos = new XYPoint(x, y);
+
+        //switch ((status, x, y))
+        //{
+        //    case RESULT_X:
+        //        {
+        //            result = RESULT_X;
+        //            //Debug.Log("X wins");
+        //            StartCoroutine(showGameResult());
+        //            break;
+        //        }
+        //    case RESULT_O:
+        //        {
+        //            result = RESULT_O;
+        //            //Debug.Log("O wins");
+        //            StartCoroutine(showGameResult());
+        //            break;
+        //        }
+        //    case RESULT_DRAW:
+        //        {
+        //            result = RESULT_DRAW;
+        //            //Debug.Log("Draw");
+        //            StartCoroutine(showGameResult());
+        //            break;
+        //        }
+        //}
+    }
+
+    //public void RemoveLetterPlace(Square letterButton)
     //{
-    //    boardState[x][y] = currTurn;
-    //    pieceNumber++;
-    //    if (currTurn == Board.TURN_X)
+    //    storedLetters[GetIndexLetterButton(letterButton.transform)] = "";
+    //    storedIndexLetters.Remove(GetIndexLetterButton(letterButton.transform));
+    //    UpdateStoredString();
+    //}
+
+    //public bool CheckWord()
+    //{
+    //    if (storedIndexLetters.Length >= MINIMAL_LETTER_COUNT)
     //    {
-    //        lastPos = new Point(x, y);
-    //    }
-    //    else //currTurn == Board.TURN_O
-    //    {
-    //        lastOPos = new Point(x, y);
+    //        return Array.Exists(GameManager.Instance.wordsDictionary, jawaban => jawaban == storedString.ToLower());
     //    }
 
-    //    switch (checkWin(currTurn, x, y))
-    //    {
-    //        case RESULT_X:
-    //            {
-    //                result = RESULT_X;
-    //                //Debug.Log("X wins");
-    //                StartCoroutine(showGameResult());
-    //                break;
-    //            }
-    //        case RESULT_O:
-    //            {
-    //                result = RESULT_O;
-    //                //Debug.Log("O wins");
-    //                StartCoroutine(showGameResult());
-    //                break;
-    //            }
-    //        case RESULT_DRAW:
-    //            {
-    //                result = RESULT_DRAW;
-    //                //Debug.Log("Draw");
-    //                StartCoroutine(showGameResult());
-    //                break;
-    //            }
-    //    }
+    //    return false;
+    //}
+
+    //public Vector2 GetPositionLetterButton(Transform letterButton)
+    //{
+    //    return letterButtonPositions[GetIndexLetterButton(letterButton)];
+    //}
+
+    //public void AddLetterPlace(Square letterButton)
+    //{
+    //    storedLetters[GetIndexLetterButton(letterButton.transform)] = letterButton.letterContained.text;
+    //    storedIndexLetters.Add(GetIndexLetterButton(letterButton.transform));
+    //    UpdateStoredString();
+    //}
+
+    //public int GetIndexLetterButton(Transform letterButton)
+    //{
+    //    return Array.IndexOf(letterButtonTransforms, letterButton);
     //}
 }

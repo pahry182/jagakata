@@ -6,6 +6,13 @@ using System.Collections.Generic;
  * This code was modified from Simon Lucas' implementation of MCTS
  * http://mcts.ai/code/java.html
  */
+
+public class SimulationValue
+{
+    public double value;
+    public List<XYPoint> storedIndexLetters = new List<XYPoint>();
+}
+
 public class TreeNode
 {
     static System.Random r = new System.Random();
@@ -14,6 +21,7 @@ public class TreeNode
     public List<TreeNode> children;
     double nVisits, totValue;
     public double uctValue;
+    public List<XYPoint> storedBestIndexLetters = new List<XYPoint>();
 
     public State state;
 
@@ -29,59 +37,54 @@ public class TreeNode
     public void IterateMCTS()
     {
         LinkedList<TreeNode> visited = new LinkedList<TreeNode>();
-        TreeNode currentSelection = this;
+        TreeNode currentNode = this;
         visited.AddLast(this);
-        while (!currentSelection.IsLeaf()) //1. SELECTION
+        while (!currentNode.IsLeaf()) //1. SELECTION
         {
-            currentSelection = currentSelection.select();
-
-            visited.AddLast(currentSelection);
+            currentNode = currentNode.Select();
+            visited.AddLast(currentNode);
         }
-        if (currentSelection.state.stateResult == Board.RESULT_NONE)
+        if (currentNode.state.stateResult == Board.RESULT_NONE)
         {
-            currentSelection.Expand(); //2. EXPANSION
-            TreeNode newNode = currentSelection.select();
+            currentNode.Expand(); //2. EXPANSION
+            TreeNode newNode = currentNode.Select();
             visited.AddLast(newNode);
-            double value = newNode.Simulate(); //3. SIMULATION
-
+            SimulationValue simulationValue = newNode.Simulate(); //3. SIMULATION
             foreach (TreeNode node in visited)
             {
-                node.updateStats(value); //4. BACKPROPAGATION
+                node.UpdateStats(simulationValue); //4. BACKPROPAGATION
             }
         }
     }
 
     public void Expand()
     {
-        List<Point> childrenMoves = ListPossibleMoves(state.boardState);
+        List<XYPoint> childrenMoves = ListPossibleMoves(state.boardSelectionState);
         //Apply one move for each expansion child
-        foreach (Point move in childrenMoves)
+        foreach (XYPoint move in childrenMoves)
         {
-            TreeNode childNode = new TreeNode(new State(state.boardState, state.lastPos, state.lastOPos, state.pieceNumber));
-            childNode.state.boardState[move.X][move.Y] = Square.SQUARE_X;
-            childNode.state.lastPos = new Point(move.X, move.Y);
-            childNode.state.pieceNumber++;
-            //childNode.state.stateResult = checkWin(childNode.state, Square.SQUARE_X);
-
+            TreeNode childNode = new TreeNode(new State(state.boardState, state.boardSelectionState, state.lastSelectedPos, state.pieceNumber));
+            childNode.state.SelectPoint(move);
+            childNode.state.stateResult = CheckWordScore(childNode.state, false);
             children.Add(childNode);
         }
     }
 
-    public TreeNode select()
+    public TreeNode Select()
     {
         TreeNode selected = null;
         double bestValue = double.MinValue;
-        foreach (TreeNode c in children)
+        foreach (TreeNode childTreeNode in children)
         {
             //UCT value calculation
-            double uctValue =
-                    c.totValue / (c.nVisits + epsilon) +
-                            Math.Sqrt(Math.Log(nVisits + 1) / (c.nVisits + epsilon)) +
-                            r.NextDouble() * epsilon; // small random number to break ties randomly in unexpanded nodes
-            c.uctValue = uctValue;
+            double uctValue = 
+                childTreeNode.totValue / (childTreeNode.nVisits + epsilon) + 
+                Math.Sqrt(Math.Log(nVisits + 1) / (childTreeNode.nVisits + epsilon)) + 
+                r.NextDouble() * epsilon; // small random number to break ties randomly in unexpanded nodes
+            childTreeNode.uctValue = uctValue;
             if (uctValue > bestValue)
             {
-                selected = c;
+                selected = childTreeNode;
                 bestValue = uctValue;
             }
         }
@@ -93,301 +96,117 @@ public class TreeNode
         return children.Count == 0;
     }
 
-    public double Simulate()
+    public SimulationValue Simulate()
     {
-        State simState = new State(Util.Instance.DeepcloneArray(state.boardState), state.lastPos, state.lastOPos, state.pieceNumber);
-        simState.stateResult = state.stateResult;
-
-        //char simCurrentTurn = state.currentTurn;
-        //char simOppTurn = (state.currentTurn == Board.TURN_O ? Board.TURN_X : Board.TURN_O);
-
-        int simValue = int.MinValue;
-
-        //simulate semi-randomly (for both players) until a terminal result is achieved
-        while (simState.stateResult == Board.RESULT_NONE)
+        State simulationState = new State(Util.Instance.DeepcloneArray(state.boardState), Util.Instance.DeepcloneArray(state.boardSelectionState), state.lastSelectedPos, state.pieceNumber)
         {
-            Point chosenMove = null;
-            chosenMove = doRandomMove();
-            //Point candidateMove1 = checkTwoPieces(simState, simCurrentTurn); //my two pieces
-            //Point candidateMove2 = checkTwoPieces(simState, simOppTurn); //opponent's two pieces
-            //Point candidateMove3 = null;
-            //if ((simState.lastPos != null) && (simState.lastOPos != null))
-            //{
-            //    candidateMove3 = placeAdjacent(simState, simCurrentTurn); //my last one piece
-            //}
+            stateResult = state.stateResult
+        };
 
-            //if (candidateMove1 != null) //check my "two pieces"
-            //{
-            //    chosenMove = candidateMove1;
-            //    //Debug.Log("myTwoPieces heuristic at " + chosenMove.x + "," + chosenMove.y);
-            //}
-            //else if (candidateMove2 != null) ///check opponent's "two pieces"
-            //{
-            //    chosenMove = candidateMove2;
-            //    //Debug.Log("oppTwoPieces heuristic at " + chosenMove.x + "," + chosenMove.y);
-            //}
-            //else if (candidateMove3 != null)
-            //{
-            //    chosenMove = candidateMove3;
-            //    //Debug.Log(simCurrentTurn + " onepiece heuristic at " + chosenMove.x + "," + chosenMove.y);
-            //}
-            //else
-            //{
-            //    chosenMove = doRandomMove();
-            //}
+        //simulate semi-randomly(for both players) until a terminal result is achieved
+        while (simulationState.stateResult == Board.RESULT_NONE)
+        {
+            XYPoint chosenMove = DoRandomMove();
 
-            if (simState.boardState[chosenMove.X][chosenMove.Y] == Square.SQUARE_EMPTY)
+            if (simulationState.boardSelectionState[chosenMove.X][chosenMove.Y] == Square.NOT_SELECTED)
             {
-                //simState.boardState[chosenMove.x][chosenMove.y] = (simCurrentTurn == Board.TURN_X ? Square.SQUARE_X : Square.SQUARE_O);
-
-                ////printState(simState.boardState); //debug
-
-                //if (simCurrentTurn == Board.TURN_X)
-                //{
-                //    simState.lastPos = new Point(chosenMove.x, chosenMove.y);
-                //}
-                //else //simCurrentTurn == Board.TURN_O
-                //{
-                //    simState.lastOPos = new Point(chosenMove.x, chosenMove.y);
-                //}
-                //simState.pieceNumber++;
-                //simState.stateResult = checkWin(simState, simCurrentTurn); //check terminal condition
-                //Debug.Log("result: " + simState.stateResult);
-                //simCurrentTurn = (simCurrentTurn == Board.TURN_X ? Board.TURN_O : Board.TURN_X); //switch turn
-                //simOppTurn = (simCurrentTurn == Board.TURN_X ? Board.TURN_O : Board.TURN_X); //switch turn
+                simulationState.SelectPoint(chosenMove);
+                simulationState.stateResult = CheckWordScore(simulationState); //check terminal condition
             }
         }
 
-        //switch (simState.stateResult)
-        //{
-        //    case Board.RESULT_DRAW:
-        //        {
-        //            simValue = 0;
-        //            break;
-        //        }
-        //    case Board.RESULT_X:
-        //        {
-        //            simValue = MCTSAI.myTurn == Board.TURN_X ? 1 : -1; //1 means victory, -1 means defeat
-        //            break;
-        //        }
-        //    case Board.RESULT_O:
-        //        {
-        //            simValue = MCTSAI.myTurn == Board.TURN_O ? 1 : -1;
-        //            break;
-        //        }
-        //    default:
-        //        {
-        //            Debug.LogError("illegal simStateResult value");
-        //            break;
-        //        }
-        //}
-        return simValue;
+        SimulationValue simulationValue = new SimulationValue()
+        {
+            value = simulationState.stateResult,
+            storedIndexLetters = simulationState.storedIndexLetters
+        };
+        return simulationValue;
     }
 
-    public void updateStats(double value)
+    public void UpdateStats(SimulationValue simulationValue)
     {
         nVisits++;
-        totValue += value;
+        totValue += simulationValue.value;
+        storedBestIndexLetters = simulationValue.storedIndexLetters;
     }
 
-    //A heuristic to check one piece in a row, placing one piece adjacent to previous own piece
-    //public Point placeAdjacent(State state, char currentTurn)
-    //{
-    //    //List<Point> moveList = new List<Point>();
-    //    //Point result = null;
-    //    //Point lastPosition = currentTurn == Board.TURN_X ? state.lastPos : state.lastOPos;
-
-    //    ////search for possible moves adjacent to lastPosition
-    //    //for (int y = 1; y > -2; y--)
-    //    //{
-    //    //    for (int x = -1; x < 2; x++)
-    //    //    {
-    //    //        if ((lastPosition.x + x >= 0) && (lastPosition.x + x < Board.BOARD_SIZE)
-    //    //            && (lastPosition.y + y >= 0) && (lastPosition.y + y < Board.BOARD_SIZE))
-    //    //        {
-    //    //            if (state.boardState[lastPosition.x + x][lastPosition.y + y] == Square.SQUARE_EMPTY)
-    //    //            {
-    //    //                moveList.Add(new Point(lastPosition.x + x, lastPosition.y + y));
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //}
-
-    //    //switch (moveList.Count)
-    //    //{
-    //    //    case 0:
-    //    //        {
-    //    //            result = null;
-    //    //            break;
-    //    //        }
-    //    //    case 1:
-    //    //        {
-    //    //            result = moveList[0];
-    //    //            break;
-    //    //        }
-    //    //    default:
-    //    //        {
-    //    //            result = moveList[r.Next(moveList.Count)];
-    //    //            break;
-    //    //        }
-    //    //}
-
-    //    //return result;
-    //}
-
-    //A heuristic to check two pieces in a row, winning a game or preventing the opponent from winning the game
-    //public Point checkTwoPieces(State state, char currentTurn)
-    //{
-    //    List<Point> moveList = new List<Point>();
-    //    Point result = null;
-
-    //    string pattern1 = new string(new char[Board.BOARD_SIZE] { Square.SQUARE_EMPTY, currentTurn, currentTurn });
-    //    string pattern2 = new string(new char[Board.BOARD_SIZE] { currentTurn, Square.SQUARE_EMPTY, currentTurn });
-    //    string pattern3 = new string(new char[Board.BOARD_SIZE] { currentTurn, currentTurn, Square.SQUARE_EMPTY });
-
-    //    //check horizontally
-    //    for (int y = 0; y < Board.BOARD_SIZE; y++)
-    //    {
-    //        string hor = new string(new char[Board.BOARD_SIZE] { state.boardState[0][y], state.boardState[1][y], state.boardState[2][y] });
-    //        if (hor.Equals(pattern1))
-    //        {
-    //            moveList.Add(new Point(0, y));
-    //        }
-    //        else if (hor.Equals(pattern2))
-    //        {
-    //            moveList.Add(new Point(1, y));
-    //        }
-    //        else if (hor.Equals(pattern3))
-    //        {
-    //            moveList.Add(new Point(2, y));
-    //        }
-    //    }
-
-    //    //check vertical
-    //    for (int x = 0; x < Board.BOARD_SIZE; x++)
-    //    {
-    //        string ver = new string(new char[Board.BOARD_SIZE] { state.boardState[x][0], state.boardState[x][1], state.boardState[x][2] });
-    //        if (ver.Equals(pattern1))
-    //        {
-    //            moveList.Add(new Point(x, 0));
-    //        }
-    //        else if (ver.Equals(pattern2))
-    //        {
-    //            moveList.Add(new Point(x, 1));
-    //        }
-    //        else if (ver.Equals(pattern3))
-    //        {
-    //            moveList.Add(new Point(x, 2));
-    //        }
-    //    }
-
-    //    //check diag1
-    //    string diag1 = new string(new char[Board.BOARD_SIZE] { state.boardState[0][2], state.boardState[1][1], state.boardState[2][0] });
-    //    if (diag1.Equals(pattern1))
-    //    {
-    //        moveList.Add(new Point(0, 2));
-    //    }
-    //    else if (diag1.Equals(pattern2))
-    //    {
-    //        moveList.Add(new Point(1, 1));
-    //    }
-    //    else if (diag1.Equals(pattern3))
-    //    {
-    //        moveList.Add(new Point(2, 0));
-    //    }
-
-    //    //check diag2
-    //    string diag2 = new string(new char[Board.BOARD_SIZE] { state.boardState[2][2], state.boardState[1][1], state.boardState[0][0] });
-    //    if (diag2.Equals(pattern1))
-    //    {
-    //        moveList.Add(new Point(2, 2));
-    //    }
-    //    else if (diag2.Equals(pattern2))
-    //    {
-    //        moveList.Add(new Point(1, 1));
-    //    }
-    //    else if (diag2.Equals(pattern3))
-    //    {
-    //        moveList.Add(new Point(0, 0));
-    //    }
-
-    //    switch (moveList.Count)
-    //    {
-    //        case 0:
-    //            {
-    //                result = null;
-    //                break;
-    //            }
-    //        case 1:
-    //            {
-    //                result = moveList[0];
-    //                break;
-    //            }
-    //        default:
-    //            {
-    //                result = moveList[r.Next(moveList.Count)];
-    //                break;
-    //            }
-    //    }
-    //    return result;
-    //}
-
-
-    public List<Point> ListPossibleMoves(char[][] boardState)
+    public List<XYPoint> ListPossibleMoves(char[][] boardSelectionState)
     {
-        List<Point> possibleMoves = new List<Point>();
+        List<XYPoint> possibleMoves = new List<XYPoint>();
         //list all 9 possible moves
         for (int i = 0; i < Board.BOARD_SIZE; i++)
         {
             for (int j = 0; j < Board.BOARD_SIZE; j++)
             {
                 //check for legal board coordinate
-                if (boardState[i][j] == Square.SQUARE_EMPTY)
+                if (boardSelectionState[i][j] == Square.NOT_SELECTED)
                 {
-                    possibleMoves.Add(new Point(i, j));
+                    possibleMoves.Add(new XYPoint(i, j));
                 }
             }
         }
         return possibleMoves;
     }
 
-    public Point doRandomMove()
+    public XYPoint DoRandomMove()
     {
-        return new Point(r.Next(Board.BOARD_SIZE), r.Next(Board.BOARD_SIZE));
+        return new XYPoint(r.Next(Board.BOARD_SIZE), r.Next(Board.BOARD_SIZE));
     }
 
 
-    public int CheckWordScore(State state, char currTurn)
+    public int CheckWordScore(State state, bool isFromSimulate = true)
     {
         int result = Board.RESULT_NONE;
-
-        //int lastX = currTurn == Board.TURN_X ? state.lastPos.x : state.lastOPos.x;
-        //int lastY = currTurn == Board.TURN_X ? state.lastPos.y : state.lastOPos.y;
-
-        //if (isHor(state, currTurn, lastY)
-        //     || isVer(state, currTurn, lastX)
-        //     || isDiag1(state, currTurn)
-        //     || isDiag2(state, currTurn))
-        //{
-        //    result = (currTurn == Square.SQUARE_X ? Board.RESULT_X : Board.RESULT_O);
-        //}
-        //else if (state.pieceNumber == Board.BOARD_SIZE * Board.BOARD_SIZE)
-        //{
-        //    result = Board.RESULT_DRAW;
-        //}
-
-
-
-        if (state.storedIndexLetters.Count >= Board.MINIMAL_LETTER_COUNT)
+        if (state.pieceNumber == Board.BOARD_SIZE * Board.BOARD_SIZE)
         {
-            if (Array.Exists(GameManager.Instance.wordsDictionary, jawaban => jawaban == state.storedString.ToLower()))
+            result = Board.RESULT_NO_MORE_LETTER;
+        }
+        else if (state.storedString.Length >= Board.MINIMAL_LETTER_COUNT)
+        {
+            //Debug.Log("Not Match " + state.storedString);
+            try
             {
-                //Still incomplete integration
-                return 1;
+                string key = state.storedString.ToLower();
+                string value = Board.Instance.wordsDictionaryNew[key];
+                result = CalculateScore(state);
+                if (isFromSimulate) Debug.Log($"Match {state.storedString} : {result}");
+                if (Board.Instance.currentBestScore < result)
+                {
+                    Board.Instance.currentBestScore = result;
+                    Board.Instance.currentBestConfig = Util.DeepCopyList(state.storedIndexLetters);
+                }
+            }
+            catch (KeyNotFoundException e)
+            {
+                //Debug.LogWarning($"Key {state.storedString} not found: " + e.Message);
             }
         }
-
         return result;
+    }
+
+    public int DetermineWeight(string letter)
+    {
+        int weight;
+
+        if (Board.Instance.scoreOf5.Contains(letter)) weight = 5;
+        else if (Board.Instance.scoreOf4.Contains(letter)) weight = 4;
+        else if (Board.Instance.scoreOf3.Contains(letter)) weight = 3;
+        else if (Board.Instance.scoreOf2.Contains(letter)) weight = 2;
+        else if (Board.Instance.scoreOf1.Contains(letter)) weight = 1;
+        else weight = 0;
+
+        return weight;
+    }
+
+    public int CalculateScore(State state)
+    {
+        float _score = 0;
+
+        foreach (var item in state.storedString)
+        {
+            _score += DetermineWeight(item.ToString());
+        }
+        return (int)_score;
     }
 
     //debugging purpose
