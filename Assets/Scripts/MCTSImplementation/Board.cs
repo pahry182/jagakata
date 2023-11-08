@@ -16,7 +16,7 @@ public class Board : MonoBehaviour
     
     [HideInInspector] public char[][] boardState;
     [HideInInspector] public char[][] boardSelectionState;
-    [HideInInspector] public char[] storedLetters;
+    [HideInInspector] public char[][] storedLetters = new char[BOARD_SIZE][];
     [HideInInspector] public int[] storedIndexLetters;
     [HideInInspector] public int result;
     [HideInInspector] public int pieceNumber;
@@ -41,8 +41,12 @@ public class Board : MonoBehaviour
     public string scoreOf2;
     public string scoreOf1;
 
-    [HideInInspector] public List<Square> temporalLetterPlace = new List<Square>();
+    public List<Square> temporalLetterPlace = new List<Square>();
     public Transform letterActivePlace;
+    public GameObject emptyGO;
+    public string storedString;
+    public Transform[] letterButtonTransforms;
+    public Vector3[] letterButtonPositions;
 
     private void Awake()
     {
@@ -114,8 +118,8 @@ public class Board : MonoBehaviour
             for (int j = 0; j < boardState[i].Length; j++)
             {
                 Square letterBox = Instantiate(letterBoxPrefab, transform).GetComponent<Square>();
-                letterBox.posX = i;
-                letterBox.posY = j;
+                letterBox.posX = j;
+                letterBox.posY = i;
                 letterBox.containedLetter = boardState[i][j];
                 letterBox.UpdateSquare();
                 letterBoxes.Add(letterBox);
@@ -215,37 +219,40 @@ public class Board : MonoBehaviour
         //}
     }
 
+    public bool CheckWord()
+    {
+        if (storedString.Length >= MINIMAL_LETTER_COUNT)
+        {
+            return Array.Exists(wordsDictionary, jawaban => jawaban == storedString.ToLower());
+        }
+
+        return false;
+    }
+
+    public Vector2 GetPositionLetterButton(Transform letterButton)
+    {
+        return letterButtonPositions[GetIndexLetterButton(letterButton)];
+    }
+
     //public void RemoveLetterPlace(Square letterButton)
     //{
-    //    storedLetters[GetIndexLetterButton(letterButton.transform)] = "";
-    //    storedIndexLetters.Remove(GetIndexLetterButton(letterButton.transform));
+    //    storedLetters[GetIndexLetterButton(letterButton.transform)] = ' ';
+    //    storedIndexLetters[GetIndexLetterButton(letterButton.transform)] = 0;
     //    UpdateStoredString();
     //}
 
-    //public bool CheckWord()
-    //{
-    //    if (storedIndexLetters.Length >= MINIMAL_LETTER_COUNT)
-    //    {
-    //        return Array.Exists(GameManager.Instance.wordsDictionary, jawaban => jawaban == storedString.ToLower());
-    //    }
+    public int GetIndexLetterButton(Transform letterButton)
+    {
+        return Array.IndexOf(letterButtonTransforms, letterButton);
+    }
 
-    //    return false;
-    //}
-
-    //public Vector2 GetPositionLetterButton(Transform letterButton)
-    //{
-    //    return letterButtonPositions[GetIndexLetterButton(letterButton)];
-    //}
-
-    //public void AddLetterPlace(Square letterButton)
-    //{
-    //    storedLetters[GetIndexLetterButton(letterButton.transform)] = letterButton.letterContained.text;
-    //    storedIndexLetters.Add(GetIndexLetterButton(letterButton.transform));
-    //    UpdateStoredString();
-    //}
-
-    //public int GetIndexLetterButton(Transform letterButton)
-    //{
-    //    return Array.IndexOf(letterButtonTransforms, letterButton);
-    //}
+    public void UpdateStoredString()
+    {
+        string temp_string = "";
+        foreach (Square item in temporalLetterPlace)
+        {
+            temp_string += item.containedLetter;
+        }
+        storedString = temp_string;
+    }
 }

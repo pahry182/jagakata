@@ -25,6 +25,7 @@ public class Square : MonoBehaviour
 
     public bool isPlaced;
     public Vector3 lastPos;
+    public GameObject dummyGO;
 
     // Use this for initialization
     void Start()
@@ -74,6 +75,40 @@ public class Square : MonoBehaviour
 
     }
 
+    public void OnMouseDown()
+    {
+        Board board = Board.Instance;
+        float duration = 0.2f;
+        if (isPlaced)
+        {
+            isPlaced = false;
+            board.temporalLetterPlace.Remove(this);
+            board.UpdateStoredString();
+            
+            transform.SetParent(board.transform);
+            transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+            transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
+            CheckWordIndicator();
+        }
+        else
+        {
+            isPlaced = true;
+            lastPos = transform.position;
+            board.temporalLetterPlace.Add(this);
+            board.UpdateStoredString();
+            dummyGO = Instantiate(board.emptyGO, board.letterActivePlace);
+            transform.DOMove(dummyGO.transform.position, duration).OnComplete(OnComplete);
+            transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+            CheckWordIndicator();
+        }
+    }
+
+    private void OnComplete()
+    {
+        Destroy(dummyGO);
+        transform.SetParent(Board.Instance.letterActivePlace);
+    }
+
     public void SelectSquare()
     {
         if ((board.isStarted) && (!board.isLocked))
@@ -87,49 +122,20 @@ public class Square : MonoBehaviour
         text.text = containedLetter.ToString();
     }
 
-    //private void SetParentToLetterContainer()
-    //{
-    //    transform.SetParent(BattleController.Instance.letterContainer);
-    //}
+    private void SetParentToLetterContainer()
+    {
+        transform.SetParent(BattleController.Instance.letterContainer);
+    }
 
-    //public void UseLetterButton()
-    //{
-    //    Board board = Board.Instance;
-    //    float duration = 0.3f;
-    //    if (isPlaced)
-    //    {
-    //        isPlaced = false;
-    //        transform.SetParent(board.canvas);
-    //        transform.DOScale(1.28f, duration);
+    private void CheckWordIndicator()
+    {
+        if (Board.Instance.CheckWord())
+        {
+            print("Ewek");
+            //if (IsOpeningIndicatorText) MainGameSceneController.Instance.OpenIndicatorText();
 
-    //        transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
-    //        board.RemoveLetterPlace(this);
-    //        board.temporalLetterPlace.Remove(this);
-
-    //        CheckWordIndicator();
-    //    }
-    //    else
-    //    {
-    //        isPlaced = true;
-    //        lastPos = board.GetPositionLetterButton(transform);
-    //        board.AddLetterPlace(this);
-    //        board.temporalLetterPlace.Add(this);
-
-    //        transform.SetParent(board.canvas);
-    //        transform.DOMove(board.letterActivePlace.position, duration).OnComplete(() => transform.SetParent(Board.Instance.letterActivePlace));
-    //        transform.DOScale(0.78f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
-    //        CheckWordIndicator();
-    //    }
-    //}
-
-    //private void CheckWordIndicator(bool IsOpeningIndicatorText = true)
-    //{
-    //    if (Board.Instance.CheckWord())
-    //    {
-    //        if (IsOpeningIndicatorText) MainGameSceneController.Instance.OpenIndicatorText();
-
-    //        MainGameSceneController.Instance.ToggleSubmitButtonSprite(true);
-    //    }
-    //    else MainGameSceneController.Instance.ToggleSubmitButtonSprite(false);
-    //}
+            //MainGameSceneController.Instance.ToggleSubmitButtonSprite(true);
+        }
+        //else MainGameSceneController.Instance.ToggleSubmitButtonSprite(false);
+    }
 }

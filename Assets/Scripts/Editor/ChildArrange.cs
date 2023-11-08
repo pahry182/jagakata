@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(ChildrenArranger))]
+[CustomEditor(typeof(ArrangeChildren))]
 
 public class ChildArrange : Editor
 {
@@ -9,11 +9,8 @@ public class ChildArrange : Editor
     {
         DrawDefaultInspector();
 
-        ChildrenArranger myGameObject = (ChildrenArranger)target;
+        ArrangeChildren myGameObject = (ArrangeChildren)target;
 
-        if (GUILayout.Button("Arrange Childs"))
-        {
-            myGameObject.ArrangeChilds();
-        }
+       
     }
 }
