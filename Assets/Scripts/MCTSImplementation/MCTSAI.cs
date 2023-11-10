@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Collections;
 using Debug = UnityEngine.Debug;
+using System.Collections.Generic;
 
 public class MCTSAI : MonoBehaviour
 {
@@ -36,13 +37,40 @@ public class MCTSAI : MonoBehaviour
         {
             StartCoroutine(CalculateAIMove());
             print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
+            LogMatrix(board.boardState);
+            LogMatrix(board.boardSelectionState);
+            board.lastSelectedPos = null;
+            board.pieceNumber = 0;
+            board.currentBestScore = 0;
+            board.currentBestConfig = new List<XYPoint>();
+            board.result = Board.RESULT_NONE;
         }
+    }
+
+    private void LogMatrix(char[][] thisArray)
+    {
+        string matrixString = "";
+
+        for (int i = 0; i < thisArray.Length; i++)
+        {
+            for (int j = 0; j < thisArray[i].Length; j++)
+            {
+                // Concatenate each element to the string
+                matrixString += thisArray[i][j] + " ";
+            }
+
+            // Add a new line after each row
+            matrixString += "\n";
+        }
+
+        // Log the entire matrix string
+        Debug.Log(matrixString);
     }
 
     private IEnumerator CalculateAIMove()
     {
         treeNode = new TreeNode(new State(board.boardState, board.boardSelectionState, board.lastSelectedPos, board.pieceNumber)); //create a new TreeNode
-
+        
         var watch = Stopwatch.StartNew();
         for (int i = 0; i < iterationNumber; i++)
         {

@@ -40,6 +40,7 @@ public class Board : MonoBehaviour
     public string scoreOf3;
     public string scoreOf2;
     public string scoreOf1;
+    public float power1mod, power2mod, power3mod;
 
     public List<Square> temporalLetterPlace = new List<Square>();
     public Transform letterActivePlace;
@@ -47,7 +48,7 @@ public class Board : MonoBehaviour
     public string storedString;
     public Transform[] letterButtonTransforms;
     public Vector3[] letterButtonPositions;
-
+    public GameSceneController gameSceneController;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -135,6 +136,12 @@ public class Board : MonoBehaviour
         //        print(boardSelectionState[i][j]);
         //    }
         //}
+    }
+
+    public void UpdateBoardState()
+    {
+        
+        
     }
 
     public void ShowCurrentBoard()
@@ -254,5 +261,70 @@ public class Board : MonoBehaviour
             temp_string += item.containedLetter;
         }
         storedString = temp_string;
+    }
+
+    public void PasangButton()
+    {
+        if (CheckWord())
+        {
+            //_sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
+            gameSceneController.UpdateScore(CalculateScore());
+            //AdvanceBarProgression();
+
+            //foreach (var item in temporalLetterPlace) item.UpdateLetterButtonTypes(PowerUpTypes.NORMAL);
+
+            //submittedWords.Add(storedString);
+            //gameSceneController.AddToDisplayPage(storedString);
+            //CheckForPowerUpValidSpawn();
+            //CheckBar();
+            List<Square> temp = new List<Square>();
+
+            foreach (Square item in temporalLetterPlace)
+            {
+                temp.Add(item);
+            }
+
+            foreach (Square item in temp)
+            {
+                item.SystemReturnLetter();
+                item.GenerateLetter();
+            }
+
+            //foreach (Square item in temporalLetterPlace)
+            //{
+            //    item.GenerateLetter();
+            //}
+
+            temporalLetterPlace = new List<Square>();
+            gameSceneController.ToggleSubmitButtonSprite(false);
+        }
+    }
+
+    public int CalculateScore()
+    {
+        float _score = storedString.Length;
+        float cumulativeScoreMods = 0f;
+
+        foreach (var item in temporalLetterPlace)
+        {
+            switch (item.powerUpType)
+            {
+                case PowerUpTypes.NORMAL:
+                    break;
+                case PowerUpTypes.POWER1:
+                    cumulativeScoreMods += power1mod;
+                    break;
+                case PowerUpTypes.POWER2:
+                    cumulativeScoreMods += power2mod;
+                    break;
+                case PowerUpTypes.POWER3:
+                    cumulativeScoreMods += power3mod;
+                    break;
+                default:
+                    break;
+            }
+        }
+        _score += _score * cumulativeScoreMods;
+        return (int)_score;
     }
 }

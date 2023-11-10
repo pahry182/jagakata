@@ -7,6 +7,8 @@ using DG.Tweening;
 
 public class Square : MonoBehaviour
 {
+    private string allLetter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     public TextMeshPro text;
     public char containedLetter;
 
@@ -26,6 +28,7 @@ public class Square : MonoBehaviour
     public bool isPlaced;
     public Vector3 lastPos;
     public GameObject dummyGO;
+    public PowerUpTypes powerUpType = PowerUpTypes.NORMAL;
 
     // Use this for initialization
     void Start()
@@ -134,8 +137,29 @@ public class Square : MonoBehaviour
             print("Ewek");
             //if (IsOpeningIndicatorText) MainGameSceneController.Instance.OpenIndicatorText();
 
-            //MainGameSceneController.Instance.ToggleSubmitButtonSprite(true);
+            GameSceneController.Instance.ToggleSubmitButtonSprite(true);
         }
-        //else MainGameSceneController.Instance.ToggleSubmitButtonSprite(false);
+        else GameSceneController.Instance.ToggleSubmitButtonSprite(false);
+    }
+
+    public void SystemReturnLetter()
+    {
+        this.DOKill();
+        float duration = 0.2f;
+        Board board = Board.Instance;
+        isPlaced = false;
+        transform.SetParent(board.transform);
+        transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+        transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
+        board.temporalLetterPlace.Remove(this);
+        board.UpdateStoredString();
+    }
+
+    public void GenerateLetter()
+    {
+        char c = allLetter[Random.Range(0, allLetter.Length)];
+        Board.Instance.boardState[posY][posX] = c;
+        containedLetter = c;
+        UpdateSquare();
     }
 }

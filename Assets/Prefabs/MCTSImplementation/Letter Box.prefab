@@ -143,6 +143,7 @@ MonoBehaviour:
   isPlaced: 0
   lastPos: {x: 0, y: 0, z: 0}
   dummyGO: {fileID: 0}
+  powerUpType: 0
 --- !u!61 &7512733194601860045
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -277,8 +278,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 3774873599
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0.8784314}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
