@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using DG.Tweening;
 
 public class Square : MonoBehaviour
 {
@@ -26,6 +24,7 @@ public class Square : MonoBehaviour
     public const char NOT_SELECTED = '0';
 
     public bool isPlaced;
+    public bool interactable;
     public Vector3 lastPos;
     public GameObject dummyGO;
     public PowerUpTypes powerUpType = PowerUpTypes.NORMAL;
@@ -34,6 +33,7 @@ public class Square : MonoBehaviour
     void Start()
     {
         status = NOT_SELECTED;
+        interactable = true;
     }
 
     // Update is called once per frame
@@ -80,6 +80,8 @@ public class Square : MonoBehaviour
 
     public void OnMouseDown()
     {
+        if (!interactable) return;
+
         Board board = Board.Instance;
         float duration = 0.2f;
         if (isPlaced)
@@ -130,12 +132,11 @@ public class Square : MonoBehaviour
         transform.SetParent(BattleController.Instance.letterContainer);
     }
 
-    private void CheckWordIndicator()
+    private void CheckWordIndicator(bool IsOpeningIndicatorText = true)
     {
         if (Board.Instance.CheckWord())
         {
-            print("Ewek");
-            //if (IsOpeningIndicatorText) MainGameSceneController.Instance.OpenIndicatorText();
+            if (IsOpeningIndicatorText) GameSceneController.Instance.OpenIndicatorText();
 
             GameSceneController.Instance.ToggleSubmitButtonSprite(true);
         }
@@ -161,5 +162,18 @@ public class Square : MonoBehaviour
         Board.Instance.boardState[posY][posX] = c;
         containedLetter = c;
         UpdateSquare();
+    }
+
+    public void SystemReturnLetterNonInstant()
+    {
+        Board bc = Board.Instance;
+        float duration = 0.2f;
+        isPlaced = false;
+        transform.SetParent(board.transform);
+        transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+        transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
+        board.temporalLetterPlace.Remove(this);
+        board.UpdateStoredString();
+        GameSceneController.Instance.ToggleSubmitButtonSprite(false);
     }
 }

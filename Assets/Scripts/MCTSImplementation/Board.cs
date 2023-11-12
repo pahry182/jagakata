@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,6 +50,9 @@ public class Board : MonoBehaviour
     public Transform[] letterButtonTransforms;
     public Vector3[] letterButtonPositions;
     public GameSceneController gameSceneController;
+    public bool isPlayerTurn = true;
+    private bool isAcakButtonAllowed = true;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -326,5 +330,44 @@ public class Board : MonoBehaviour
         }
         _score += _score * cumulativeScoreMods;
         return (int)_score;
+    }
+
+    public void AcakButton()
+    {
+        if (!isAcakButtonAllowed) return;
+        isAcakButtonAllowed = false;
+
+        List<Square> temporalLetterPlace = new List<Square>();
+
+        foreach (Transform item in letterActivePlace)
+        {
+            temporalLetterPlace.Add(item.GetComponent<Square>());
+        }
+
+        foreach (var item in temporalLetterPlace)
+        {
+            if (item.isPlaced) item.SystemReturnLetter();
+        }
+
+        foreach (var item in letterBoxes) item.GetComponent<Square>().interactable = false;
+
+        StartCoroutine(AnimationGenerateLetter());
+
+        if (gameSceneController.extraProgression <= 0)
+        {
+            gameSceneController.currentBarProgression -= gameSceneController.decrementAcakBarProgression;
+        }
+    }
+
+    private IEnumerator AnimationGenerateLetter()
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            foreach (var item in letterBoxes) item.GenerateLetter();
+            yield return new WaitForSeconds(0.055f);
+        }
+
+        foreach (var item in letterBoxes) item.GetComponent<Square>().interactable = true;
+        isAcakButtonAllowed = true;
     }
 }
