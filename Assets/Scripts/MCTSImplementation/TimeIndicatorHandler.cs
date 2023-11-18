@@ -22,7 +22,7 @@ public class TimeIndicatorHandler : MonoBehaviour
     void Update()
     {
         float currentTime = GameSceneController.Instance.currentBarProgression;
-        float maxTime = GameSceneController.Instance.maxBarProgression;
+        float maxTime = GameSceneController.Instance.currentMaxBarProgression;
 
         image.fillAmount = currentTime / maxTime;
         //R 118 188 70

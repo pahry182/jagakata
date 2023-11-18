@@ -76281,12 +76281,14 @@ MonoBehaviour:
   - Luar Biasa!
   - Menakjubkan!
   cumulativeScore: 0
-  maxBarProgression: 20
+  maxPlayerBarProgression: 20
+  maxAIBarProgression: 12
   incrementBarProgression: 0
-  decrementAcakBarProgression: 0.7
+  decrementAcakBarProgression: 7
   decrementTimeBarProgression: 1
   currentBarProgression: 0
   extraProgression: 0
+  currentMaxBarProgression: 0
 --- !u!1 &1245171941
 GameObject:
   m_ObjectHideFlags: 0

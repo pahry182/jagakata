@@ -39,42 +39,6 @@ public class Square : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //update square sprite
-        //switch (status)
-        //{
-        //    case SQUARE_EMPTY:
-        //        {
-        //            transform.GetComponent<Image>().sprite = squareemptySprite;
-        //            break;
-        //        }
-        //    case SQUARE_X:
-        //        {
-        //            transform.GetComponent<Image>().sprite = squarexSprite;
-        //            break;
-        //        }
-        //    case SQUARE_O:
-        //        {
-        //            transform.GetComponent<Image>().sprite = squareoSprite;
-        //            break;
-        //        }
-        //}
-
-        ////update and set UCTValue visibility
-        //if (status == SQUARE_EMPTY)
-        //{
-        //    if (mctsai.uctValues[posX][posY] == double.MinValue)
-        //    {
-        //        uctValue.text = "?"; //So the double.MinValue will not be shown
-        //    }
-        //    else
-        //    {
-        //        uctValue.text = string.Format("{0:0.00}", mctsai.uctValues[posX][posY]);
-        //    }
-        //}
-        //else
-        //{
-        //    uctValue.gameObject.SetActive(false);
-        //}
 
     }
 
@@ -82,6 +46,11 @@ public class Square : MonoBehaviour
     {
         if (!interactable) return;
 
+        SelectSquare();
+    }
+
+    public void SelectSquare(bool isAI = false)
+    {
         Board board = Board.Instance;
         float duration = 0.2f;
         if (isPlaced)
@@ -89,11 +58,11 @@ public class Square : MonoBehaviour
             isPlaced = false;
             board.temporalLetterPlace.Remove(this);
             board.UpdateStoredString();
-            
+
             transform.SetParent(board.transform);
             transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
             transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
-            CheckWordIndicator();
+            
         }
         else
         {
@@ -104,22 +73,16 @@ public class Square : MonoBehaviour
             dummyGO = Instantiate(board.emptyGO, board.letterActivePlace);
             transform.DOMove(dummyGO.transform.position, duration).OnComplete(OnComplete);
             transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
-            CheckWordIndicator();
+            
         }
+
+        if (!isAI) CheckWordIndicator();
     }
 
     private void OnComplete()
     {
         Destroy(dummyGO);
         transform.SetParent(Board.Instance.letterActivePlace);
-    }
-
-    public void SelectSquare()
-    {
-        if ((board.isStarted) && (!board.isLocked))
-        {
-            board.SelectSquare(posX, posY);
-        }
     }
 
     public void UpdateSquare()

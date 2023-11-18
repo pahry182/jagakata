@@ -35,15 +35,15 @@ public class MCTSAI : MonoBehaviour
     {
         if (board.isStarted)
         {
-            StartCoroutine(CalculateAIMove());
-            print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
-            LogMatrix(board.boardState);
-            LogMatrix(board.boardSelectionState);
             board.lastSelectedPos = null;
             board.pieceNumber = 0;
             board.currentBestScore = 0;
             board.currentBestConfig = new List<XYPoint>();
             board.result = Board.RESULT_NONE;
+            StartCoroutine(CalculateAIMove());
+            print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
+            //LogMatrix(board.boardState);
+            //LogMatrix(board.boardSelectionState);
         }
     }
 

@@ -15,14 +15,15 @@ public class GameSceneController : MonoBehaviour
     public Button resetButton;
     public TextMeshProUGUI scoreText, indicatorText;
     public string[] indicatorTextContent;
-    public float cumulativeScore;
+    public float cumulativeScore, cumulativeScoreAI;
 
     [Header("Level Design")]
-    public int maxBarProgression;
+    public int maxPlayerBarProgression;
+    public int maxAIBarProgression;
     public float incrementBarProgression;
     public float decrementAcakBarProgression, decrementTimeBarProgression;
 
-    [HideInInspector] public float currentBarProgression, extraProgression;
+    [HideInInspector] public float currentBarProgression, extraProgression, currentMaxBarProgression;
 
     private void Awake()
     {
@@ -40,7 +41,8 @@ public class GameSceneController : MonoBehaviour
     void Start()
     {
         indicatorText.gameObject.SetActive(false);
-        currentBarProgression = maxBarProgression;
+        currentBarProgression = maxPlayerBarProgression;
+        currentMaxBarProgression = maxPlayerBarProgression;
     }
 
     // Update is called once per frame
@@ -49,14 +51,18 @@ public class GameSceneController : MonoBehaviour
         if (currentBarProgression > 0) currentBarProgression -= Time.deltaTime;
         else 
         {
-            currentBarProgression = maxBarProgression;
             if (Board.Instance.isPlayerTurn)
             {
+                currentBarProgression = maxAIBarProgression;
+                currentMaxBarProgression = maxAIBarProgression;
                 SwitchTurn(false);
                 OpenIndicatorText("Waktu habis! Giliran komputer!");
+                Board.Instance.StartAISequenceMove();
             }
             else
             {
+                currentBarProgression = maxPlayerBarProgression;
+                currentMaxBarProgression = maxPlayerBarProgression;
                 SwitchTurn(true);
                 OpenIndicatorText("Giliran pemain!");
             }
@@ -85,6 +91,11 @@ public class GameSceneController : MonoBehaviour
     {
         cumulativeScore += score;
         scoreText.text = cumulativeScore.ToString();
+    }
+    public void UpdateScoreAI(int score)
+    {
+        cumulativeScoreAI += score;
+        scoreText.text = cumulativeScoreAI.ToString();
     }
 
     public void ToggleSubmitButtonSprite(bool condition)

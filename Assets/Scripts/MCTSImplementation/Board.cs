@@ -52,11 +52,14 @@ public class Board : MonoBehaviour
     public GameSceneController gameSceneController;
     public bool isPlayerTurn = true;
     private bool isAcakButtonAllowed = true;
+    private MCTSAI mCTSAI;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        mCTSAI = GetComponent<MCTSAI>();
     }
 
     // Start is called before the first frame update
@@ -203,31 +206,6 @@ public class Board : MonoBehaviour
         boardState[x][y] = status;
         pieceNumber++;
         lastSelectedPos = new XYPoint(x, y);
-
-        //switch ((status, x, y))
-        //{
-        //    case RESULT_X:
-        //        {
-        //            result = RESULT_X;
-        //            //Debug.Log("X wins");
-        //            StartCoroutine(showGameResult());
-        //            break;
-        //        }
-        //    case RESULT_O:
-        //        {
-        //            result = RESULT_O;
-        //            //Debug.Log("O wins");
-        //            StartCoroutine(showGameResult());
-        //            break;
-        //        }
-        //    case RESULT_DRAW:
-        //        {
-        //            result = RESULT_DRAW;
-        //            //Debug.Log("Draw");
-        //            StartCoroutine(showGameResult());
-        //            break;
-        //        }
-        //}
     }
 
     public bool CheckWord()
@@ -244,13 +222,6 @@ public class Board : MonoBehaviour
     {
         return letterButtonPositions[GetIndexLetterButton(letterButton)];
     }
-
-    //public void RemoveLetterPlace(Square letterButton)
-    //{
-    //    storedLetters[GetIndexLetterButton(letterButton.transform)] = ' ';
-    //    storedIndexLetters[GetIndexLetterButton(letterButton.transform)] = 0;
-    //    UpdateStoredString();
-    //}
 
     public int GetIndexLetterButton(Transform letterButton)
     {
@@ -302,6 +273,39 @@ public class Board : MonoBehaviour
             temporalLetterPlace = new List<Square>();
             gameSceneController.ToggleSubmitButtonSprite(false);
         }
+    }
+
+    public void AIPasangButton()
+    {
+        //_sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
+        gameSceneController.UpdateScoreAI(CalculateScore());
+        //AdvanceBarProgression();
+
+        //foreach (var item in temporalLetterPlace) item.UpdateLetterButtonTypes(PowerUpTypes.NORMAL);
+
+        //submittedWords.Add(storedString);
+        //gameSceneController.AddToDisplayPage(storedString);
+        //CheckForPowerUpValidSpawn();
+        //CheckBar();
+        List<Square> temp = new List<Square>();
+
+        foreach (Square item in temporalLetterPlace)
+        {
+            temp.Add(item);
+        }
+
+        foreach (Square item in temp)
+        {
+            item.SystemReturnLetter();
+            item.GenerateLetter();
+        }
+
+        //foreach (Square item in temporalLetterPlace)
+        //{
+        //    item.GenerateLetter();
+        //}
+
+        temporalLetterPlace = new List<Square>();
     }
 
     public int CalculateScore()
@@ -369,5 +373,40 @@ public class Board : MonoBehaviour
 
         foreach (var item in letterBoxes) item.GetComponent<Square>().interactable = true;
         isAcakButtonAllowed = true;
+    }
+
+    public void StartAISequenceMove()
+    {
+        StartCoroutine(StartAI());
+    }
+
+    private IEnumerator StartAI()
+    {
+        float maxTimeLimit = gameSceneController.currentMaxBarProgression;
+        yield return new WaitForSeconds(maxTimeLimit - (maxTimeLimit * UnityEngine.Random.Range(0.8f, 1.0f)));
+
+        mCTSAI.StartAI();
+
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.8f, 1.2f));
+
+        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
+
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f, 0.4f));
+
+        foreach (XYPoint item in currentBestConfig)
+        {
+            foreach (Square square in letterBoxes)
+            {
+                if (square.posY == item.X && square.posX == item.Y)
+                {
+                    yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
+                    square.SelectSquare(true);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.8f, 1.2f));
+
+        AIPasangButton();
     }
 }
