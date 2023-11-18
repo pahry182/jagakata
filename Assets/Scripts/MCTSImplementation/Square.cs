@@ -73,7 +73,6 @@ public class Square : MonoBehaviour
             dummyGO = Instantiate(board.emptyGO, board.letterActivePlace);
             transform.DOMove(dummyGO.transform.position, duration).OnComplete(OnComplete);
             transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
-            
         }
 
         if (!isAI) CheckWordIndicator();

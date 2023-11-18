@@ -169,7 +169,7 @@ public class TreeNode
                 string key = state.storedString.ToLower();
                 string value = Board.Instance.wordsDictionaryNew[key];
                 result = CalculateScore(state);
-                if (isFromSimulate) Debug.Log($"Match {state.storedString} : {result}");
+                //if (isFromSimulate) Debug.Log($"Match {state.storedString} : {result}");
                 if (Board.Instance.currentBestScore < result)
                 {
                     Board.Instance.currentBestScore = result;

@@ -53,6 +53,8 @@ public class Board : MonoBehaviour
     public bool isPlayerTurn = true;
     private bool isAcakButtonAllowed = true;
     private MCTSAI mCTSAI;
+    private bool isLoopAgain;
+    private Coroutine currentAICoroutine;
 
     private void Awake()
     {
@@ -72,7 +74,13 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (!isPlayerTurn && gameSceneController.currentBarProgression >= 1)
+        {
+            if (currentAICoroutine == null)
+            {
+                currentAICoroutine = StartCoroutine(Try());
+            }
+        }
     }
 
     public void InitDict()
@@ -384,29 +392,36 @@ public class Board : MonoBehaviour
     {
         float maxTimeLimit = gameSceneController.currentMaxBarProgression;
         yield return new WaitForSeconds(maxTimeLimit - (maxTimeLimit * UnityEngine.Random.Range(0.8f, 1.0f)));
+    }
 
+    IEnumerator Try()
+    {
         mCTSAI.StartAI();
-
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.8f, 1.2f));
-
         gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
 
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f, 0.4f));
-
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
         foreach (XYPoint item in currentBestConfig)
         {
             foreach (Square square in letterBoxes)
             {
                 if (square.posY == item.X && square.posX == item.Y)
                 {
-                    yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
+                    if (isPlayerTurn) 
+                    {
+                        currentAICoroutine = null;
+                        print("P");
+                        yield break;
+                    }
                     square.SelectSquare(true);
+                    yield return new WaitForSeconds(UnityEngine.Random.Range(0.3f, 0.5f));
                 }
             }
         }
 
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.8f, 1.2f));
-
+        print("P2");
+        print("P3");
         AIPasangButton();
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+        currentAICoroutine = null;
     }
 }
