@@ -397,9 +397,10 @@ public class Board : MonoBehaviour
     IEnumerator Try()
     {
         mCTSAI.StartAI();
-        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
+
         foreach (XYPoint item in currentBestConfig)
         {
             foreach (Square square in letterBoxes)

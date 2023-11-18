@@ -1012,7 +1012,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 83.65}
+  m_AnchoredPosition: {x: -0.0000061989, y: 85.5}
   m_SizeDelta: {x: 155.56, y: 21.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &225179177
@@ -1070,7 +1070,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -76281,6 +76281,7 @@ MonoBehaviour:
   - Luar Biasa!
   - Menakjubkan!
   cumulativeScore: 0
+  cumulativeScoreAI: 0
   maxPlayerBarProgression: 20
   maxAIBarProgression: 12
   incrementBarProgression: 0

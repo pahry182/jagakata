@@ -56,7 +56,7 @@ public class GameSceneController : MonoBehaviour
                 currentBarProgression = maxAIBarProgression;
                 currentMaxBarProgression = maxAIBarProgression;
                 SwitchTurn(false);
-                OpenIndicatorText("Waktu habis! Giliran komputer!");
+                OpenIndicatorText("<color=#FF5733>Waktu habis! Giliran komputer!");
                 Board.Instance.StartAISequenceMove();
             }
             else
@@ -64,7 +64,7 @@ public class GameSceneController : MonoBehaviour
                 currentBarProgression = maxPlayerBarProgression;
                 currentMaxBarProgression = maxPlayerBarProgression;
                 SwitchTurn(true);
-                OpenIndicatorText("Giliran pemain!");
+                OpenIndicatorText("<color=#33FF7E>Giliran pemain!");
             }
         }
 
