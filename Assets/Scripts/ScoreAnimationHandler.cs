@@ -8,7 +8,8 @@ public class ScoreAnimationHandler : MonoBehaviour
 	//References
 	[Header("UI references")]
 	public GameObject scoreTextPrefab;
-	public Transform target, startPoint, _dynamic;
+	public Transform target, target2, startPoint, _dynamic;
+	private Transform currentTarget;
 
 	[Space]
 	[Header("Available amount : (object's amount to pool)")]
@@ -58,13 +59,42 @@ public class ScoreAnimationHandler : MonoBehaviour
 
 				//animate coin to target position
 				float duration = Random.Range(minAnimDuration, maxAnimDuration);
-				obj.transform.DOMove(target.position, duration)
+				obj.transform.DOMove(currentTarget.position, duration)
 				.SetEase(easeType)
 				.OnComplete(() => {
 					//executes whenever coin reach target position
 					obj.SetActive(false);
 					currentQueue.Enqueue(obj);
-					MainGameSceneController.Instance.UpdateScore(score);
+					GameSceneController.Instance.UpdateScore(score);
+				});
+			}
+		}
+	}
+
+	void AnimateAI(Vector3 collectedCoinPosition, int amount, int score)
+	{
+		for (int i = 0; i < amount; i++)
+		{
+			//check if there's coins in the pool
+			if (currentQueue.Count > 0)
+			{
+				//extract a coin from the pool
+				GameObject obj = currentQueue.Dequeue();
+				obj.GetComponent<TextMeshProUGUI>().text = "+" + score.ToString();
+				obj.SetActive(true);
+
+				//move coin to the collected coin pos
+				obj.transform.position = collectedCoinPosition + new Vector3(Random.Range(-spread, spread), 0f, 0f);
+
+				//animate coin to target position
+				float duration = Random.Range(minAnimDuration, maxAnimDuration);
+				obj.transform.DOMove(currentTarget.position, duration)
+				.SetEase(easeType)
+				.OnComplete(() => {
+					//executes whenever coin reach target position
+					obj.SetActive(false);
+					currentQueue.Enqueue(obj);
+					GameSceneController.Instance.UpdateScoreAI(score);
 				});
 			}
 		}
@@ -72,6 +102,13 @@ public class ScoreAnimationHandler : MonoBehaviour
 
 	public void AddScoreAnimation(Vector3 spawnPosition, int amount, int score)
 	{
+		currentTarget = target;
 		Animate(spawnPosition, amount, score);
+	}
+
+	public void AddScoreAnimationAI(Vector3 spawnPosition, int amount, int score)
+	{
+		currentTarget = target2;
+		AnimateAI(spawnPosition, amount, score);
 	}
 }

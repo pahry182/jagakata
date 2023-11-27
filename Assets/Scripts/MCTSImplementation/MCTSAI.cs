@@ -21,8 +21,12 @@ public class MCTSAI : MonoBehaviour
         board.InitDict();
         board.InitBoard();
         InitAI();
-        board.isStarted = true;
         //StartAI();
+    }
+
+    public void StartTheGame()
+    {
+        board.isStarted = true;
     }
 
     // Update is called once per frame
@@ -40,6 +44,8 @@ public class MCTSAI : MonoBehaviour
             board.currentBestScore = 0;
             board.currentBestConfig = new List<XYPoint>();
             board.result = Board.RESULT_NONE;
+            int randomIteration = Random.Range(1500, 5000);
+            iterationNumber = randomIteration;
             StartCoroutine(CalculateAIMove());
             print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
             //LogMatrix(board.boardState);

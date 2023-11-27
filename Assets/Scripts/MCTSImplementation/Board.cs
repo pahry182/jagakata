@@ -55,6 +55,7 @@ public class Board : MonoBehaviour
     private MCTSAI mCTSAI;
     private bool isLoopAgain;
     private Coroutine currentAICoroutine;
+    private ScoreAnimationHandler _sah;
 
     private void Awake()
     {
@@ -62,6 +63,7 @@ public class Board : MonoBehaviour
         else Destroy(gameObject);
 
         mCTSAI = GetComponent<MCTSAI>();
+        _sah = GetComponent<ScoreAnimationHandler>();
     }
 
     // Start is called before the first frame update
@@ -74,7 +76,7 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isPlayerTurn && gameSceneController.currentBarProgression >= 1)
+        if (!isPlayerTurn && isStarted && gameSceneController.currentBarProgression >= 1)
         {
             if (currentAICoroutine == null)
             {
@@ -250,8 +252,8 @@ public class Board : MonoBehaviour
     {
         if (CheckWord())
         {
-            //_sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
-            gameSceneController.UpdateScore(CalculateScore());
+            _sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
+            //gameSceneController.UpdateScore(CalculateScore());
             //AdvanceBarProgression();
 
             //foreach (var item in temporalLetterPlace) item.UpdateLetterButtonTypes(PowerUpTypes.NORMAL);
@@ -285,8 +287,8 @@ public class Board : MonoBehaviour
 
     public void AIPasangButton()
     {
-        //_sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
-        gameSceneController.UpdateScoreAI(CalculateScore());
+        _sah.AddScoreAnimationAI(_sah.startPoint.position, 1, CalculateScore());
+        //gameSceneController.UpdateScoreAI(CalculateScore());
         //AdvanceBarProgression();
 
         //foreach (var item in temporalLetterPlace) item.UpdateLetterButtonTypes(PowerUpTypes.NORMAL);
@@ -396,9 +398,16 @@ public class Board : MonoBehaviour
 
     IEnumerator Try()
     {
+        if (isPlayerTurn)
+        {
+            currentAICoroutine = null;
+            print("P");
+            yield break;
+        }
+        print("P2");
         mCTSAI.StartAI();
 
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 4f));
         gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
 
         foreach (XYPoint item in currentBestConfig)
@@ -419,10 +428,16 @@ public class Board : MonoBehaviour
             }
         }
 
-        print("P2");
-        print("P3");
-        AIPasangButton();
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+        if (isPlayerTurn)
+        {
+            currentAICoroutine = null;
+            print("P");
+            yield break;
+        }
+
+        if (currentBestConfig.Count == 0) AcakButton();
+        else AIPasangButton();
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f));
         currentAICoroutine = null;
     }
 }

@@ -34,6 +34,7 @@ public class Square : MonoBehaviour
     {
         status = NOT_SELECTED;
         interactable = true;
+        lastPos = transform.position;
     }
 
     // Update is called once per frame
@@ -51,6 +52,7 @@ public class Square : MonoBehaviour
 
     public void SelectSquare(bool isAI = false)
     {
+        if (!Board.Instance.isStarted) return;
         Board board = Board.Instance;
         float duration = 0.2f;
         if (isPlaced)
@@ -60,19 +62,18 @@ public class Square : MonoBehaviour
             board.UpdateStoredString();
 
             transform.SetParent(board.transform);
-            transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+            transform.DOScale(0.62f, duration).OnComplete(() => transform.DOScale(0.86f, 0.1f));
             transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
             
         }
         else
         {
             isPlaced = true;
-            lastPos = transform.position;
             board.temporalLetterPlace.Add(this);
             board.UpdateStoredString();
             dummyGO = Instantiate(board.emptyGO, board.letterActivePlace);
             transform.DOMove(dummyGO.transform.position, duration).OnComplete(OnComplete);
-            transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+            transform.DOScale(0.62f, duration).OnComplete(() => transform.DOScale(0.86f, 0.1f));
         }
 
         if (!isAI) CheckWordIndicator();
@@ -112,7 +113,7 @@ public class Square : MonoBehaviour
         Board board = Board.Instance;
         isPlaced = false;
         transform.SetParent(board.transform);
-        transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+        transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(0.86f, 0.1f));
         transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
         board.temporalLetterPlace.Remove(this);
         board.UpdateStoredString();
@@ -132,7 +133,7 @@ public class Square : MonoBehaviour
         float duration = 0.2f;
         isPlaced = false;
         transform.SetParent(board.transform);
-        transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(1f, 0.1f));
+        transform.DOScale(0.72f, duration).OnComplete(() => transform.DOScale(0.86f, 0.1f));
         transform.DOMove(lastPos, duration).onComplete = SetParentToLetterContainer;
         board.temporalLetterPlace.Remove(this);
         board.UpdateStoredString();

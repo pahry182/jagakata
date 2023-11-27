@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
-public class GameSceneController : MonoBehaviour
+public class GameSceneController : UIController
 {
     public static GameSceneController Instance { get; internal set; }
 
@@ -13,9 +13,13 @@ public class GameSceneController : MonoBehaviour
     public Sprite submitAcceptedSprite, submitNotAcceptedSprite;
     public Image submitButtonImage;
     public Button resetButton;
-    public TextMeshProUGUI scoreText, indicatorText;
+    public TextMeshProUGUI scoreText, scoreAIText, indicatorText;
     public string[] indicatorTextContent;
     public float cumulativeScore, cumulativeScoreAI;
+    public GameObject windowStart;
+    public TextMeshProUGUI startText;
+    public TextMeshProUGUI jagakataText;
+    public GameObject shade, button1, button2;
 
     [Header("Level Design")]
     public int maxPlayerBarProgression;
@@ -48,43 +52,67 @@ public class GameSceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentBarProgression > 0) currentBarProgression -= Time.deltaTime;
-        else 
+        if (Board.Instance.isStarted)
         {
-            if (Board.Instance.isPlayerTurn)
-            {
-                currentBarProgression = maxAIBarProgression;
-                currentMaxBarProgression = maxAIBarProgression;
-                SwitchTurn(false);
-                OpenIndicatorText("<color=#FF5733>Waktu habis! Giliran komputer!");
-                Board.Instance.StartAISequenceMove();
-            }
+            if (currentBarProgression > 0) currentBarProgression -= Time.deltaTime;
             else
             {
-                currentBarProgression = maxPlayerBarProgression;
-                currentMaxBarProgression = maxPlayerBarProgression;
-                SwitchTurn(true);
-                OpenIndicatorText("<color=#33FF7E>Giliran pemain!");
+                if (Board.Instance.isPlayerTurn)
+                {
+                    currentBarProgression = maxAIBarProgression;
+                    currentMaxBarProgression = maxAIBarProgression;
+                    SwitchTurn(false);
+                    OpenIndicatorText("<color=#FF5733>Waktu habis! Giliran komputer!");
+                    Board.Instance.StartAISequenceMove();
+                }
+                else
+                {
+                    currentBarProgression = maxPlayerBarProgression;
+                    currentMaxBarProgression = maxPlayerBarProgression;
+                    SwitchTurn(true);
+                    OpenIndicatorText("<color=#33FF7E>Giliran pemain!");
+                }
+            }
+
+            if (Board.Instance.isPlayerTurn)
+            {
+                if (currentBarProgression < 2) resetButton.interactable = false;
+                else resetButton.interactable = true;
+            }
+
+            if (cumulativeScore >= 50)
+            {
+                Board.Instance.isStarted = false;
+                startText.text = $"Poin {cumulativeScore}. {indicatorTextContent[Random.Range(0, indicatorTextContent.Length)]}";
+                jagakataText.text = "Pemain menang!";
+                button1.SetActive(false);
+                button2.SetActive(true);
+                windowStart.SetActive(true);
+                shade.SetActive(true);
+            } 
+            else if (cumulativeScoreAI >= 50)
+            {
+                Board.Instance.isStarted = false;
+                startText.text = $"Kurang {50 - cumulativeScore} poin lagi untuk menang!";
+                jagakataText.text = "Pemain kalah!";
+                button1.SetActive(false);
+                windowStart.SetActive(true);
+                button2.SetActive(true);
+                shade.SetActive(true);
             }
         }
-
-        if (Board.Instance.isPlayerTurn)
-        {
-            if (currentBarProgression < 2) resetButton.interactable = false;
-            else resetButton.interactable = true;
-        }
-        
     }
 
     private void SwitchTurn(bool toggle)
     {
-        Board.Instance.isPlayerTurn = toggle;
-        submitButtonImage.GetComponent<Button>().interactable = toggle;
-        resetButton.interactable = toggle;
         List<Square> temp = new List<Square>();
         foreach (Square item in Board.Instance.temporalLetterPlace) temp.Add(item);
         foreach (Square item in temp) item.SystemReturnLetter();
         foreach (Square item in Board.Instance.letterBoxes) item.interactable = toggle;
+
+        Board.Instance.isPlayerTurn = toggle;
+        submitButtonImage.GetComponent<Button>().interactable = toggle;
+        resetButton.interactable = toggle;
     }
 
     public void UpdateScore(int score)
@@ -95,7 +123,7 @@ public class GameSceneController : MonoBehaviour
     public void UpdateScoreAI(int score)
     {
         cumulativeScoreAI += score;
-        scoreText.text = cumulativeScoreAI.ToString();
+        scoreAIText.text = cumulativeScoreAI.ToString();
     }
 
     public void ToggleSubmitButtonSprite(bool condition)
@@ -129,5 +157,10 @@ public class GameSceneController : MonoBehaviour
 
         if (indicatorAnimation != null) StopCoroutine(indicatorAnimation);
         indicatorAnimation = StartCoroutine(StartIndicatorText());
+    }
+
+    public void Restart() 
+    { 
+        LoadScene("MCTSImplementation");
     }
 }
