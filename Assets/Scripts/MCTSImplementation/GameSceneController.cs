@@ -89,6 +89,7 @@ public class GameSceneController : UIController
                 button2.SetActive(true);
                 windowStart.SetActive(true);
                 shade.SetActive(true);
+                GameManagerMCTS.Instance.PlayBgm("Menu");
             } 
             else if (cumulativeScoreAI >= 50)
             {
@@ -99,6 +100,7 @@ public class GameSceneController : UIController
                 windowStart.SetActive(true);
                 button2.SetActive(true);
                 shade.SetActive(true);
+                GameManagerMCTS.Instance.PlayBgm("Menu");
             }
         }
     }
@@ -148,7 +150,7 @@ public class GameSceneController : UIController
         {
             int num = Mathf.Clamp(Board.Instance.storedString.Length - Board.MINIMAL_LETTER_COUNT, 0, indicatorTextContent.Length - 1);
             indicatorText.text = indicatorTextContent[num];
-            //GameManager.Instance.PlaySfx((num + BattleController.Instance.minimalLetterCount) + " Letters");
+            GameManagerMCTS.Instance.PlaySfx(num + Board.MINIMAL_LETTER_COUNT + " Letters");
         }
         else
         {

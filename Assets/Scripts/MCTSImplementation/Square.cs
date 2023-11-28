@@ -53,6 +53,7 @@ public class Square : MonoBehaviour
     public void SelectSquare(bool isAI = false)
     {
         if (!Board.Instance.isStarted) return;
+        GameManagerMCTS.Instance.PlaySfx("ButtonHit");
         Board board = Board.Instance;
         float duration = 0.2f;
         if (isPlaced)

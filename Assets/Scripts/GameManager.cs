@@ -232,7 +232,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SetupAudio()
+    protected void SetupAudio()
     {
         for (int i = 0; i < audio.soundEffects.Length; i++)
         {
@@ -241,6 +241,7 @@ public class GameManager : MonoBehaviour
             audio.soundEffects[i].audioSource.volume = audio.soundEffects[i].volume;
             audio.soundEffects[i].audioSource.pitch = audio.soundEffects[i].pitch;
             audio.soundEffects[i].audioSource.loop = audio.soundEffects[i].loop;
+            audio.soundEffects[i].audioSource.playOnAwake = false;
             audio.activeSfx.Add(audio.soundEffects[i].audioSource);
         }
 
@@ -251,6 +252,7 @@ public class GameManager : MonoBehaviour
             audio.backgroundMusics[i].audioSource.volume = audio.backgroundMusics[i].volume;
             audio.backgroundMusics[i].audioSource.pitch = audio.backgroundMusics[i].pitch;
             audio.backgroundMusics[i].audioSource.loop = audio.backgroundMusics[i].loop;
+            audio.backgroundMusics[i].audioSource.playOnAwake = false;
             audio.activeBgm.Add(audio.backgroundMusics[i].audioSource);
         }
     }

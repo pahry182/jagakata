@@ -120,7 +120,7 @@ public class MainGameSceneController : UIController
         indicatorText.text = indicatorTextContent[num];
         if (indicatorAnimation != null) StopCoroutine(indicatorAnimation);
         indicatorAnimation = StartCoroutine(StartIndicatorText());
-        GameManager.Instance.PlaySfx((num + BattleController.Instance.minimalLetterCount) + " Letters");
+        GameManager.Instance.PlaySfx(num + BattleController.Instance.minimalLetterCount + " Letters");
     }
 
     private IEnumerator StartIndicatorText()

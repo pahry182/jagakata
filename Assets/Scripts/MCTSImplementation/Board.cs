@@ -252,6 +252,7 @@ public class Board : MonoBehaviour
     {
         if (CheckWord())
         {
+            GameManagerMCTS.Instance.PlaySfx("ButtonHit");
             _sah.AddScoreAnimation(_sah.startPoint.position, 1, CalculateScore());
             //gameSceneController.UpdateScore(CalculateScore());
             //AdvanceBarProgression();
@@ -350,7 +351,7 @@ public class Board : MonoBehaviour
     {
         if (!isAcakButtonAllowed) return;
         isAcakButtonAllowed = false;
-
+        GameManagerMCTS.Instance.PlaySfx("ButtonHit");
         List<Square> temporalLetterPlace = new List<Square>();
 
         foreach (Transform item in letterActivePlace)
@@ -407,9 +408,15 @@ public class Board : MonoBehaviour
         print("P2");
         mCTSAI.StartAI();
 
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 4f));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+        if (isPlayerTurn)
+        {
+            currentAICoroutine = null;
+            print("P");
+            yield break;
+        }
         gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
-
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
         foreach (XYPoint item in currentBestConfig)
         {
             foreach (Square square in letterBoxes)

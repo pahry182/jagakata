@@ -27,6 +27,8 @@ public class MCTSAI : MonoBehaviour
     public void StartTheGame()
     {
         board.isStarted = true;
+        GameManagerMCTS.Instance.PlayBgm("Gameplay");
+        GameManagerMCTS.Instance.PlaySfx("ButtonHit");
     }
 
     // Update is called once per frame
@@ -44,7 +46,7 @@ public class MCTSAI : MonoBehaviour
             board.currentBestScore = 0;
             board.currentBestConfig = new List<XYPoint>();
             board.result = Board.RESULT_NONE;
-            int randomIteration = Random.Range(1500, 5000);
+            int randomIteration = Random.Range(1500, 2000);
             iterationNumber = randomIteration;
             StartCoroutine(CalculateAIMove());
             print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");

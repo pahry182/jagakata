@@ -1308,7 +1308,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0000061989, y: 85.5}
+  m_AnchoredPosition: {x: -0.0000061989, y: 115}
   m_SizeDelta: {x: 155.56, y: 21.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &225179177
@@ -2180,6 +2180,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 685880396}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: PlaySfx
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: ButtonHit
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &594893341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2911,6 +2923,107 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.0012646}
   m_SizeDelta: {x: 301, y: 647.3}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &685880395
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 685880397}
+  - component: {fileID: 685880396}
+  m_Layer: 0
+  m_Name: Sound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &685880396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685880395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cd8b8616e0f424e9c18ce915992cd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audio:
+    soundEffects:
+    - name: 3 Letters
+      clip: {fileID: 8300000, guid: fb0b5b699b5ac754c836ab9b961c1e6f, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 4 Letters
+      clip: {fileID: 8300000, guid: 752b57277942173468e10ecb91f80ac8, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 5 Letters
+      clip: {fileID: 8300000, guid: e3e1ddd3bdc9dbc45aa7362824dd2a26, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 6 Letters
+      clip: {fileID: 8300000, guid: 74163aafac2bd754f846b487819d409b, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: 7 Letters
+      clip: {fileID: 8300000, guid: 57cb2d08b01a4a2458b207d755d6297c, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    - name: ButtonHit
+      clip: {fileID: 8300000, guid: ae7fd32635453164c8600b13956d70e9, type: 3}
+      volume: 0.25
+      pitch: 1
+      loop: 0
+      audioSource: {fileID: 0}
+    backgroundMusics:
+    - name: Menu
+      clip: {fileID: 8300000, guid: eb91b658971da174aacdf4d5cd8e9396, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 1
+      audioSource: {fileID: 0}
+    - name: Gameplay
+      clip: {fileID: 8300000, guid: a4d0bcb7de2fdfa4d8bb0747501ee044, type: 3}
+      volume: 1
+      pitch: 1
+      loop: 1
+      audioSource: {fileID: 0}
+    activeSfx: []
+    activeBgm: []
+  userScoreDB:
+    results: []
+  currentUserSessionID: 
+  loadedTextFileName: 
+  wordsDictionary: []
+--- !u!4 &685880397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685880395}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &712669825
 GameObject:
   m_ObjectHideFlags: 0
