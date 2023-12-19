@@ -56,6 +56,7 @@ public class Board : MonoBehaviour
     private bool isLoopAgain;
     private Coroutine currentAICoroutine;
     private ScoreAnimationHandler _sah;
+    [HideInInspector] public bool isCalculationDone;
 
     private void Awake()
     {
@@ -405,17 +406,26 @@ public class Board : MonoBehaviour
             print("P");
             yield break;
         }
+
         print("P2");
+        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
+        isCalculationDone = false;
+        lastSelectedPos = null;
+        pieceNumber = 0;
+        currentBestScore = 0;
+        currentBestConfig = new List<XYPoint>();
+        result = RESULT_NONE;
         mCTSAI.StartAI();
 
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+        yield return new WaitUntil(() => isCalculationDone);
+
         if (isPlayerTurn)
         {
             currentAICoroutine = null;
             print("P");
             yield break;
         }
-        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
+        
         yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
         foreach (XYPoint item in currentBestConfig)
         {
@@ -446,5 +456,13 @@ public class Board : MonoBehaviour
         else AIPasangButton();
         yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f));
         currentAICoroutine = null;
+    }
+
+    
+
+    public void PrivacyPolicy()
+    {
+        string url = "https://www.termsfeed.com/live/ab0b298e-d8fb-4b74-8e9a-54c1699a3ebe";
+        Application.OpenURL(url);
     }
 }

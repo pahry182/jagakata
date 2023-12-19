@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using Debug = UnityEngine.Debug;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class MCTSAI : MonoBehaviour
 {
@@ -37,22 +38,26 @@ public class MCTSAI : MonoBehaviour
         
     }
 
-    public void StartAI()
+    public async void StartAI()
     {
-        if (board.isStarted)
+        //board.isCalculationDone = false;
+        //board.lastSelectedPos = null;
+        //board.pieceNumber = 0;
+        //board.currentBestScore = 0;
+        //board.currentBestConfig = new List<XYPoint>();
+        //board.result = Board.RESULT_NONE;
+        await Task.Run(() =>
         {
-            board.lastSelectedPos = null;
-            board.pieceNumber = 0;
-            board.currentBestScore = 0;
-            board.currentBestConfig = new List<XYPoint>();
-            board.result = Board.RESULT_NONE;
-            int randomIteration = Random.Range(1500, 2000);
-            iterationNumber = randomIteration;
-            StartCoroutine(CalculateAIMove());
-            print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
-            //LogMatrix(board.boardState);
-            //LogMatrix(board.boardSelectionState);
-        }
+            if (board.isStarted)
+            {
+                List<XYPoint> currentBestConfig = new List<XYPoint>();
+                //int randomIteration = Random.Range(1500, 2000);
+                iterationNumber = 2000;
+                CalculateAIMove();
+                print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
+            }
+            board.isCalculationDone = true;
+        });
     }
 
     private void LogMatrix(char[][] thisArray)
@@ -75,7 +80,7 @@ public class MCTSAI : MonoBehaviour
         Debug.Log(matrixString);
     }
 
-    private IEnumerator CalculateAIMove()
+    private void CalculateAIMove()
     {
         treeNode = new TreeNode(new State(board.boardState, board.boardSelectionState, board.lastSelectedPos, board.pieceNumber)); //create a new TreeNode
         
@@ -99,8 +104,6 @@ public class MCTSAI : MonoBehaviour
         foreach (XYPoint item in board.currentBestConfig) word += board.boardState[item.X][item.Y];
         //print($"Best: {board.currentBestScore} {word}");
         bestWord = word;
-
-        yield return new WaitForSeconds(0f);
 
         //shows uctValue for each possible next move taken by the opponent
         //UpdateUCTValues();
