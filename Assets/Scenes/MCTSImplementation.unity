@@ -76461,6 +76461,7 @@ MonoBehaviour:
   letterButtonPositions: []
   gameSceneController: {fileID: 1214261653}
   isPlayerTurn: 1
+  isCalculationDone: 0
 --- !u!114 &974398284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77515,7 +77516,7 @@ MonoBehaviour:
   button1: {fileID: 712669825}
   button2: {fileID: 594893338}
   maxPlayerBarProgression: 20
-  maxAIBarProgression: 12
+  maxAIBarProgression: 20
   incrementBarProgression: 0
   decrementAcakBarProgression: 0.8
   decrementTimeBarProgression: 1

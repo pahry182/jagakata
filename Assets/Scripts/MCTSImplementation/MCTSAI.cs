@@ -40,12 +40,6 @@ public class MCTSAI : MonoBehaviour
 
     public async void StartAI()
     {
-        //board.isCalculationDone = false;
-        //board.lastSelectedPos = null;
-        //board.pieceNumber = 0;
-        //board.currentBestScore = 0;
-        //board.currentBestConfig = new List<XYPoint>();
-        //board.result = Board.RESULT_NONE;
         await Task.Run(() =>
         {
             if (board.isStarted)
@@ -55,6 +49,7 @@ public class MCTSAI : MonoBehaviour
                 iterationNumber = 2000;
                 CalculateAIMove();
                 print("Score: " + board.currentBestScore + " " + bestWord + " " + timeElapsed + " ms.");
+
             }
             board.isCalculationDone = true;
         });
@@ -92,32 +87,11 @@ public class MCTSAI : MonoBehaviour
 
         watch.Stop();
         timeElapsed = watch.ElapsedMilliseconds.ToString();
-        //Debug.Log("time elapsed for iterateMCTS() = " + elapsedMs + " ms");
 
         treeNode = treeNode.Select();
-        //print(treeNode.state.stateResult);
-        //print(treeNode.state.lastSelectedPos.X + " " + treeNode.state.lastSelectedPos.Y + " " +
-        //    board.boardState[treeNode.state.lastSelectedPos.X][treeNode.state.lastSelectedPos.Y]
-        //    );
-
         string word = "";
         foreach (XYPoint item in board.currentBestConfig) word += board.boardState[item.X][item.Y];
-        //print($"Best: {board.currentBestScore} {word}");
         bestWord = word;
-
-        //shows uctValue for each possible next move taken by the opponent
-        //UpdateUCTValues();
-
-        //board.SelectSquare(treeNode.state.lastSelectedPos.X, treeNode.state.lastSelectedPos.Y);
-
-        //if (myTurn == Board.TURN_X)
-        //{
-        //    board.selectSquare(treeNode.state.lastPos.x, treeNode.state.lastPos.y);
-        //}
-        //else //myTurn == Board.TURN_O
-        //{
-        //    board.selectSquare(treeNode.state.lastOPos.x, treeNode.state.lastOPos.y);
-        //}
     }
 
     public void InitAI()

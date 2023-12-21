@@ -52,7 +52,7 @@ public class TreeNode
             SimulationValue simulationValue = newNode.Simulate(); //3. SIMULATION
             foreach (TreeNode node in visited)
             {
-                node.UpdateStats(simulationValue); //4. BACKPROPAGATION
+                node.Backpropagate(simulationValue); //4. BACKPROPAGATION
             }
         }
     }
@@ -123,11 +123,10 @@ public class TreeNode
         return simulationValue;
     }
 
-    public void UpdateStats(SimulationValue simulationValue)
+    public void Backpropagate(SimulationValue simulationValue)
     {
         nVisits++;
         totValue += simulationValue.value;
-        storedBestIndexLetters = simulationValue.storedIndexLetters;
     }
 
     public List<XYPoint> ListPossibleMoves(char[][] boardSelectionState)

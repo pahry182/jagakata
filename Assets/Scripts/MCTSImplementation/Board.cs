@@ -408,7 +408,6 @@ public class Board : MonoBehaviour
         }
 
         print("P2");
-        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
         isCalculationDone = false;
         lastSelectedPos = null;
         pieceNumber = 0;
@@ -418,6 +417,7 @@ public class Board : MonoBehaviour
         mCTSAI.StartAI();
 
         yield return new WaitUntil(() => isCalculationDone);
+        gameSceneController.OpenIndicatorText("Komputer sedang berpikir...");
 
         if (isPlayerTurn)
         {
@@ -425,8 +425,7 @@ public class Board : MonoBehaviour
             print("P");
             yield break;
         }
-        
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 2f));
+
         foreach (XYPoint item in currentBestConfig)
         {
             foreach (Square square in letterBoxes)
@@ -440,11 +439,11 @@ public class Board : MonoBehaviour
                         yield break;
                     }
                     square.SelectSquare(true);
-                    yield return new WaitForSeconds(UnityEngine.Random.Range(0.3f, 0.5f));
+                    yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f, 0.6f));
                 }
             }
         }
-
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.8f, 1.6f));
         if (isPlayerTurn)
         {
             currentAICoroutine = null;
@@ -454,7 +453,7 @@ public class Board : MonoBehaviour
 
         if (currentBestConfig.Count == 0) AcakButton();
         else AIPasangButton();
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.4f, 1.6f));
         currentAICoroutine = null;
     }
 
